@@ -1,0 +1,11 @@
+{
+    "mcpServers": {
+        "laravel-boost": {
+            "command": "/home/mohammedzom/.config/herd-lite/bin/php",
+            "args": [
+                "/home/mohammedzom/projects/larval-projects/job-backoffice/artisan",
+                "boost:mcp"
+            ]
+        }
+    }
+}

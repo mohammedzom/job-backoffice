@@ -39,4 +39,5 @@ class Companies extends Model
     {
         return $this->hasMany(JobVacancies::class, 'company_id', 'id');
     }
+
 }

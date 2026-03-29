@@ -17,7 +17,7 @@ use Illuminate\Notifications\Notifiable;
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable, HasUuids, SoftDeletes;
+    use HasFactory, HasUuids, Notifiable, SoftDeletes;
 
     protected $keyType = 'string';
 
@@ -34,5 +34,20 @@ class User extends Authenticatable
             'password' => 'hashed',
             'deleted_at' => 'datetime',
         ];
+    }
+
+    public function applications()
+    {
+        return $this->hasMany(JobApplications::class, 'user_id', 'id');
+    }
+
+    public function resumes()
+    {
+        return $this->hasMany(Resumes::class, 'user_id', 'id');
+    }
+
+    public function company()
+    {
+        return $this->hasOne(Companies::class, 'owner_id', 'id');
     }
 }

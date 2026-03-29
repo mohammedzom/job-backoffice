@@ -35,4 +35,9 @@ class JobVacancies extends Model
     {
         return $this->belongsTo(Companies::class, 'company_id', 'id');
     }
+
+    public function applications()
+    {
+        return $this->hasMany(JobApplications::class, 'job_id', 'id');
+    }
 }

@@ -30,7 +30,13 @@ class Companies extends Model
         ];
     }
 
-    public function owner(){
+    public function owner()
+    {
         return $this->belongsTo(User::class, 'owner_id', 'id');
+    }
+
+    public function jobs()
+    {
+        return $this->hasMany(JobVacancies::class, 'company_id', 'id');
     }
 }

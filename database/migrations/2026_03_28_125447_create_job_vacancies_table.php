@@ -22,10 +22,10 @@ return new class extends Migration
             $table->string('location');
             $table->enum('type', ['full_time', 'part_time', 'contract', 'remote', 'hybrid', 'other'])->default('full_time');
             $table->enum('status', ['open', 'closed', 'pending'])->default('pending');
-            $table->date('application_deadline');
+            $table->date('application_deadline')->nullable();
             $table->integer('view_count')->default(0);
             $table->integer('apply_count')->default(0);
-            $table->text('required_skills');
+            $table->json('technologies');
             $table->timestamps();
             $table->softDeletes();
         });

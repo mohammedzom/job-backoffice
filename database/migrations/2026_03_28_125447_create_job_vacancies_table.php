@@ -13,19 +13,21 @@ return new class extends Migration
     {
         Schema::create('job_vacancies', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignId('company_id')->constrained()->cascadeOnDelete();
+            $table->foreignUuid('company_id')->constrained('companies')->restrictOnDelete();
+            $table->foreignUuid('category_id')->constrained('job_categories')->restrictOnDelete();
+
             $table->string('title');
             $table->text('description');
             $table->string('salary');
             $table->string('location');
-            $table->enum('type', ['full_time', 'part_time', 'contract', 'temporary', 'other'])->default('full_time');
+            $table->enum('type', ['full_time', 'part_time', 'contract', 'remote', 'hybrid', 'other'])->default('full_time');
             $table->enum('status', ['open', 'closed', 'pending'])->default('pending');
             $table->date('application_deadline');
             $table->integer('view_count')->default(0);
             $table->integer('apply_count')->default(0);
             $table->text('required_skills');
-            $table->timestamp('deleted_at')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

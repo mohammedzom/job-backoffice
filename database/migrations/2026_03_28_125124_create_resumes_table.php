@@ -13,16 +13,16 @@ return new class extends Migration
     {
         Schema::create('resumes', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignUuid('user_id')->constrained('users')->restrictOnDelete();
             $table->string('file_name');
             $table->string('file_url');
             $table->string('contact_details');
-            $table->string('summary');
-            $table->string('experience');
-            $table->string('education');
-            $table->string('skills');
-            $table->timestamp('deleted_at')->nullable();
+            $table->longText('summary');
+            $table->longText('experience');
+            $table->longText('education');
+            $table->longText('skills');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

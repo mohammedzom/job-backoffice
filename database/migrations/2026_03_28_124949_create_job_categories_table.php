@@ -14,8 +14,9 @@ return new class extends Migration
         Schema::create('job_categories', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('name')->unique();
-            $table->timestamp('deleted_at')->nullable();
             $table->timestamps();
+            $table->softDeletes();
+
         });
     }
 

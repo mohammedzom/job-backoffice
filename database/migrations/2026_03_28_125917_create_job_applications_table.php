@@ -13,14 +13,14 @@ return new class extends Migration
     {
         Schema::create('job_applications', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignUuid('job_id')->constrained('job_vacancies')->cascadeOnDelete();
-            $table->foreignUuid('resume_id')->constrained('resumes')->cascadeOnDelete();
-            $table->foreignUuid('user_id')->constrained('users')->cascadeOnDelete();
-            $table->float('ai_generated_score')->nullable();
+            $table->foreignUuid('job_id')->constrained('job_vacancies')->restrictOnDelete();
+            $table->foreignUuid('resume_id')->constrained('resumes')->restrictOnDelete();
+            $table->foreignUuid('user_id')->constrained('users')->restrictOnDelete();
+            $table->float('ai_generated_score', 2)->default(0);
             $table->text('ai_generated_feedback')->nullable();
             $table->enum('status', ['pending', 'accepted', 'rejected'])->default('pending');
-            $table->timestamp('deleted_at')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

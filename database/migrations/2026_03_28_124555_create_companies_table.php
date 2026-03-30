@@ -13,13 +13,14 @@ return new class extends Migration
     {
         Schema::create('companies', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignId('owner_id')->constrained()->cascadeOnDelete();
+            $table->foreignUuid('owner_id')->constrained('users')->restrictOnDelete();
             $table->string('name')->unique();
-            $table->string('address')->nullable();
-            $table->string('industry')->nullable();
+            $table->string('address');
+            $table->string('industry');
             $table->text('website')->nullable();
-            $table->timestamp('deleted_at')->nullable();
             $table->timestamps();
+            $table->softDeletes();
+
         });
     }
 

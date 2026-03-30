@@ -13,9 +13,10 @@ return new class extends Migration
     {
         Schema::create('category_job', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('job_id')->constrained('job_vacancies')->cascadeOnDelete();
-            $table->foreignId('category_id')->constrained('job_categories')->cascadeOnDelete();
+            $table->foreignUuid('job_id')->constrained('job_vacancies')->restrictOnDelete();
+            $table->foreignUuid('category_id')->constrained('job_categories')->restrictOnDelete();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

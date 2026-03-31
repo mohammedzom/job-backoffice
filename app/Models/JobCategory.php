@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 #[Fillable(['name'])]
-class JobCategories extends Model
+class JobCategory extends Model
 {
     use HasFactory, HasUuids, SoftDeletes;
 

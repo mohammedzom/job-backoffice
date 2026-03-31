@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Companies;
 use App\Models\JobApplications;
-use App\Models\JobCategories;
+use App\Models\JobCategory;
 use App\Models\JobVacancies;
 use App\Models\Resumes;
 use App\Models\User;
@@ -24,7 +24,7 @@ class DatabaseSeeder extends Seeder
         $jobData = json_decode(file_get_contents(database_path('./data/job_data.json')), true);
 
         foreach ($jobData['jobCategories'] as $category) {
-            JobCategories::firstOrCreate([
+            JobCategory::firstOrCreate([
                 'name' => $category,
             ]);
         }
@@ -58,7 +58,7 @@ class DatabaseSeeder extends Seeder
                 'location' => $jobVacancy['location'],
                 'type' => $jobVacancy['type'],
                 'salary' => $jobVacancy['salary'],
-                'category_id' => JobCategories::where('name', $jobVacancy['category'])->first()->id,
+                'category_id' => JobCategory::where('name', $jobVacancy['category'])->first()->id,
                 'company_id' => Companies::where('name', $jobVacancy['company'])->first()->id,
                 'technologies' => json_encode($jobVacancy['technologies']),
             ]);

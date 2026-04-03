@@ -14,7 +14,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/job-vacancies', [JobVacanciesController::class, 'index'])->name('job-vacancy.index');
     Route::get('/job-categories', [JobCategoryController::class, 'index'])->name('category.index');
     Route::get('/job-applications', [JobApplicationController::class, 'index'])->name('application.index');
-    Route::get('/company', [CompanyController::class, 'index'])->name('company.index');
+
     Route::get('/users', [UserController::class, 'index'])->name('user.index');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -23,6 +23,9 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('job-category', JobCategoryController::class)->names('job-category');
     Route::put('job-category/{id}/restore', [JobCategoryController::class, 'restore'])->name('job-category.restore');
+
+    Route::resource('company', CompanyController::class)->names('company');
+    Route::put('company/{id}/restore', [CompanyController::class, 'restore'])->name('company.restore');
 });
 
 require __DIR__.'/auth.php';

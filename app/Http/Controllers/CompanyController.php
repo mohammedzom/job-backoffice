@@ -55,6 +55,13 @@ class CompanyController extends Controller
             ->with('success', 'Company updated successfully');
     }
 
+    public function show(string $id)
+    {
+        $company = Companies::with(['jobs.applications.user', 'jobs.applications.job'])->findOrFail($id);
+
+        return view('company.show', compact('company'));
+    }
+
     public function destroy(string $id)
     {
         $company = Companies::findOrFail($id);

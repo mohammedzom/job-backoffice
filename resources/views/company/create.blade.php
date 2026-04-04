@@ -5,33 +5,75 @@
         </h2>
     </x-slot>
 
-    <div class="overflow-x-auto p-6">
-        <div class="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-md">
-
-            <form action="{{ route('job-category.store') }}" method="POST">
-                @csrf
-                <div class="mb-4">
-
-                    <label for="name"
-                        class="block text-sm font-medium text-gray-700">{{ __('Category name') }}</label>
-                    <input type="text" name="name" id="name"
-                        class="{{ $errors->has('name') ? 'outline-red-500 outline outline-1' : '' }} mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                        value="{{ old('name') }}">
-                    @error('name')
-                        <p class="mt-2 text-red-600 text-sm">{{ $message }}</p>
-                    @enderror
+    <div class="py-12 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-4xl mx-auto">
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden">
+                <div class="px-8 py-6 border-b border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50">
+                    <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100">{{ __('Company Details') }}</h3>
+                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ __('Enter the company information. This will be publicly visible to applicants.') }}</p>
                 </div>
-                <div class="flex justify-end space-x-4">
+                <div class="p-8">
+                    <form action="{{ route('company.store') }}" method="POST">
+                        @csrf
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Company Name -->
+                            <div class="md:col-span-2">
+                                <label for="name" class="block text-sm font-semibold text-gray-700 dark:text-gray-300">{{ __('Company Name') }}</label>
+                                <input type="text" name="name" id="name"
+                                    class="mt-2 block w-full rounded-xl border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900/50 text-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm transition duration-150 {{ $errors->has('name') ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : '' }}"
+                                    value="{{ old('name') }}" placeholder="{{ __('e.g. Acme Corporation') }}">
+                                @error('name')
+                                    <p class="mt-2 text-sm text-red-500 dark:text-red-400 font-medium">{{ $message }}</p>
+                                @enderror
+                            </div>
 
-                    <a href="{{ route('job-category.index') }}"
-                        class="px-4 py-2 rounded-md text-gray-500 hover:text-gray-700">{{ __('Cancel') }}</a>
+                            <!-- Company Industry -->
+                            <div>
+                                <label for="industry" class="block text-sm font-semibold text-gray-700 dark:text-gray-300">{{ __('Industry') }}</label>
+                                <input type="text" name="industry" id="industry"
+                                    class="mt-2 block w-full rounded-xl border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900/50 text-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm transition duration-150 {{ $errors->has('industry') ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : '' }}"
+                                    value="{{ old('industry') }}" placeholder="{{ __('e.g. Technology, Healthcare') }}">
+                                @error('industry')
+                                    <p class="mt-2 text-sm text-red-500 dark:text-red-400 font-medium">{{ $message }}</p>
+                                @enderror
+                            </div>
 
-                    <button type="submit"
-                        class="inline-flex items-center px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">{{ __('Add Category') }}</button>
-            </form>
+                            <!-- Company Website -->
+                            <div>
+                                <label for="website" class="block text-sm font-semibold text-gray-700 dark:text-gray-300">{{ __('Website') }}</label>
+                                <input type="url" name="website" id="website"
+                                    class="mt-2 block w-full rounded-xl border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900/50 text-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm transition duration-150 {{ $errors->has('website') ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : '' }}"
+                                    value="{{ old('website') }}" placeholder="{{ __('https://example.com') }}">
+                                @error('website')
+                                    <p class="mt-2 text-sm text-red-500 dark:text-red-400 font-medium">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <!-- Company Address -->
+                            <div class="md:col-span-2">
+                                <label for="address" class="block text-sm font-semibold text-gray-700 dark:text-gray-300">{{ __('Address') }}</label>
+                                <input type="text" name="address" id="address"
+                                    class="mt-2 block w-full rounded-xl border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900/50 text-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm transition duration-150 {{ $errors->has('address') ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : '' }}"
+                                    value="{{ old('address') }}" placeholder="{{ __('123 Business Rd, City, Country') }}">
+                                @error('address')
+                                    <p class="mt-2 text-sm text-red-500 dark:text-red-400 font-medium">{{ $message }}</p>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="mt-10 flex items-center justify-end space-x-4 border-t border-gray-100 dark:border-gray-700 pt-6">
+                            <a href="{{ route('company.index') }}"
+                                class="inline-flex items-center px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-xl font-medium text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-900 transition-all duration-300">
+                                {{ __('Cancel') }}
+                            </a>
+                            <button type="submit"
+                                class="inline-flex items-center px-6 py-2 bg-gradient-to-r from-indigo-600 to-blue-500 hover:from-indigo-500 hover:to-blue-400 text-white font-medium text-sm rounded-xl shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900 transition-all duration-300 transform hover:-translate-y-0.5">
+                                {{ __('Add Company') }}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
-
     </div>
-    </div>
-
 </x-app-layout>

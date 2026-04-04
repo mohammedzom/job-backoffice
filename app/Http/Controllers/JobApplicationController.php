@@ -2,63 +2,66 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\JobApplication\JobApplicationUpdateRequest;
+use App\Models\JobApplications;
 use Illuminate\Http\Request;
 
 class JobApplicationController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(Request $request)
     {
-        return view('job-application.index');
+        // Active
+        $query = JobApplications::latest();
+
+        // Archived
+        if ($request->input('archived') == 'true') {
+            $query->onlyTrashed();
+        }
+        $jobApplications = $query->with(['user', 'job'])->paginate(5)->onEachSide(1)->withQueryString();
+
+        return view('job-application.index', compact('jobApplications'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(string $id)
     {
-        //
+        $jobApplication = JobApplications::with(['user', 'job'])->findOrFail($id);
+
+        return view('job-application.edit', compact('jobApplication'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function update(JobApplicationUpdateRequest $request, string $id)
     {
-        //
+        $jobApplication = JobApplications::findOrFail($id);
+        $validated = $request->validated();
+
+        $jobApplication->update($validated);
+
+        return redirect()->route('job-application.show', $id)
+            ->with('success', 'Job Application updated successfully');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+    public function show(string $id)
+    {
+        $jobApplication = JobApplications::with(['user', 'job', 'resume'])->findOrFail($id);
+
+        return view('job-application.show', compact('jobApplication'));
+    }
+
     public function destroy(string $id)
     {
-        //
+        $jobApplication = JobApplications::findOrFail($id);
+        $jobApplication->delete();
+
+        return redirect()->route('job-application.index')
+            ->with('success', 'Job Application archived successfully');
+    }
+
+    public function restore(string $id)
+    {
+        $jobApplication = JobApplications::withTrashed()->findOrFail($id);
+        $jobApplication->restore();
+
+        return redirect()->route('job-application.index')
+            ->with('success', 'Job Application restored successfully');
     }
 }

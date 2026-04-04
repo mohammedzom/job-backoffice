@@ -150,7 +150,9 @@
                                 <label for="categories"
                                     class="block text-sm font-semibold text-gray-700 dark:text-gray-300">{{ __('Categories') }}</label>
                                 <div class="mt-2" dir="rtl">
-                                    <select x-ref="select" multiple name="categories[]" id="categories" class="hidden {{ $errors->has('categories') || $errors->has('categories.*') ? 'border-red-500' : '' }}" autocomplete="off">
+                                    <select x-ref="select" multiple name="categories[]" id="categories"
+                                        class="hidden {{ $errors->has('categories') || $errors->has('categories.*') ? 'border-red-500' : '' }}"
+                                        autocomplete="off">
                                         @foreach ($categories as $category)
                                             <option value="{{ $category->id }}"
                                                 {{ collect(old('categories', $jobVacancy->categories->pluck('id')))->contains($category->id) ? 'selected' : '' }}>
@@ -198,7 +200,7 @@
 
                         <div
                             class="mt-10 flex items-center justify-end space-x-4 border-t border-gray-100 dark:border-gray-700 pt-6">
-                            <a href="{{ route('job-vacancy.index') }}"
+                            <a href="{{ url()->previous() }}"
                                 class="inline-flex items-center px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-xl font-medium text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-900 transition-all duration-300">
                                 {{ __('Cancel') }}
                             </a>
@@ -226,58 +228,71 @@
             line-height: 1.25rem;
             box-shadow: none;
         }
+
         .dark .ts-control {
             border-color: rgb(75 85 99);
             color: rgb(243 244 246);
         }
+
         .ts-control.focus {
             border-color: rgb(99 102 241);
             box-shadow: 0 0 0 1px rgb(99 102 241);
         }
+
         .dark .ts-control.focus {
             border-color: rgb(99 102 241);
             box-shadow: 0 0 0 1px rgb(99 102 241);
         }
+
         .ts-dropdown {
             border-radius: 0.75rem;
             border-color: rgb(209 213 219);
             background-color: white;
             box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
         }
+
         .dark .ts-dropdown {
             border-color: rgb(75 85 99);
             background-color: rgb(31 41 55);
             color: rgb(243 244 246);
         }
+
         .ts-dropdown .active {
             background-color: rgb(238 242 255);
             color: rgb(79 70 229);
         }
+
         .dark .ts-dropdown .active {
             background-color: rgb(55 65 81);
             color: rgb(129 140 248);
         }
+
         .ts-control input {
             color: inherit;
         }
+
         .dark .ts-control input {
             color: white;
         }
+
         .ts-control .item {
-            background-color: rgb(34 139 230); /* Match image tag color approximately */
+            background-color: rgb(34 139 230);
+            /* Match image tag color approximately */
             color: white;
             border-radius: 0.25rem;
             align-items: center;
             display: inline-flex;
             gap: 0.5rem;
         }
+
         .ts-control .item .remove {
             color: white;
             opacity: 0.8;
-            border-right: 1px solid rgba(255,255,255,0.3);
+            border-right: 1px solid rgba(255, 255, 255, 0.3);
         }
+
         .ts-control .item .remove:hover {
-            background: rgba(0,0,0,0.1);
+            background: rgba(0, 0, 0, 0.1);
             opacity: 1;
         }
     </style>

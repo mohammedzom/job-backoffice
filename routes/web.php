@@ -16,6 +16,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/job-applications', [JobApplicationController::class, 'index'])->name('application.index');
 
     Route::get('/users', [UserController::class, 'index'])->name('user.index');
+    Route::get('/users/{id}/edit', [UserController::class, 'edit'])->name('user.edit');
+    Route::put('/users/{id}', [UserController::class, 'update'])->name('user.update');
+    Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('user.destroy');
+    Route::put('/users/{id}/restore', [UserController::class, 'restore'])->name('user.restore');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -29,6 +33,9 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('job-vacancy', JobVacanciesController::class)->names('job-vacancy');
     Route::put('job-vacancy/{id}/restore', [JobVacanciesController::class, 'restore'])->name('job-vacancy.restore');
+
+    Route::resource('job-application', JobApplicationController::class)->names('job-application');
+    Route::put('job-application/{id}/restore', [JobApplicationController::class, 'restore'])->name('job-application.restore');
 });
 
 require __DIR__.'/auth.php';

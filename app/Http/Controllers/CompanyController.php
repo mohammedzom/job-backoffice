@@ -5,8 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Companies\CompaniesCreateRequest;
 use App\Http\Requests\Companies\CompaniesUpdateRequest;
 use App\Models\Companies;
+use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth as FacadesAuth;
 
 class CompanyController extends Controller
 {
@@ -26,18 +26,34 @@ class CompanyController extends Controller
 
     public function create()
     {
-        return view('company.create');
+        $industries = ['Technology', 'Healthcare', 'Finance', 'Education', 'Retail', 'Manufacturing', 'Other'];
+
+        return view('company.create', compact('industries'));
     }
 
     public function store(CompaniesCreateRequest $request)
     {
-        Companies::create([
+        $owner = User::create([
+            'name' => $request->owner_name,
+            'email' => $request->owner_email,
+            'password' => $request->owner_password,
+            'role' => 'company',
+        ]);
+        if (! $owner) {
+            return redirect()->route('company.create')
+                ->with('error', __('Failed to create company owner'));
+        }
+        $company = Companies::create([
             'name' => $request->name,
             'industry' => $request->industry,
             'website' => $request->website,
             'address' => $request->address,
-            'owner_id' => FacadesAuth::id(),
+            'owner_id' => $owner->id,
         ]);
+        if (! $company) {
+            return redirect()->route('company.create')
+                ->with('error', __('Failed to create company'));
+        }
 
         return redirect()->route('company.index')
             ->with('success', __('Company added successfully'));
@@ -46,8 +62,9 @@ class CompanyController extends Controller
     public function edit(string $id)
     {
         $company = Companies::findOrFail($id);
+        $industries = ['Technology', 'Healthcare', 'Finance', 'Education', 'Retail', 'Manufacturing', 'Other'];
 
-        return view('company.edit', compact('company'));
+        return view('company.edit', compact('company', 'industries'));
     }
 
     public function update(CompaniesUpdateRequest $request, string $id)

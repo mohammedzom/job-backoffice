@@ -2,63 +2,113 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\JobVacancies\JobVacanciesCreateRequest;
+use App\Http\Requests\JobVacancies\JobVacanciesUpdateRequest;
+use App\Models\Companies;
+use App\Models\JobCategory;
+use App\Models\JobVacancies;
 use Illuminate\Http\Request;
 
 class JobVacanciesController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(Request $request)
     {
-        return view('job-vacancies.index');
+        // Active
+        $query = JobVacancies::latest();
+
+        // Archived
+        if ($request->input('archived') == 'true') {
+            $query->onlyTrashed();
+        }
+        $jobVacancies = $query->paginate(5)->onEachSide(1)->withQueryString();
+
+        return view('job-vacancies.index', compact('jobVacancies'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        $companies = Companies::orderBy('name')->get();
+        $categories = JobCategory::orderBy('name')->get();
+
+        return view('job-vacancies.create', compact('companies', 'categories'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function store(JobVacanciesCreateRequest $request)
     {
-        //
+        $validated = $request->validated();
+
+        $categories = $validated['categories'] ?? [];
+        unset($validated['categories']);
+
+        if (isset($validated['technologies']) && is_string($validated['technologies'])) {
+            $validated['technologies'] = array_map('trim', explode(',', $validated['technologies']));
+        }
+
+        $jobVacancy = JobVacancies::create($validated);
+
+        if (! empty($categories)) {
+            $jobVacancy->categories()->syncWithoutDetaching($categories);
+        }
+
+        return redirect()->route('job-vacancy.index')
+            ->with('success', __('Job Vacancy added successfully'));
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(string $id)
     {
-        //
+        $companies = Companies::orderBy('name')->get();
+        $categories = JobCategory::orderBy('name')->get();
+        $jobVacancy = JobVacancies::findOrFail($id);
+
+        return view('job-vacancies.edit', compact('jobVacancy', 'companies', 'categories'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function update(JobVacanciesUpdateRequest $request, string $id)
     {
-        //
+        $jobVacancy = JobVacancies::findOrFail($id);
+        $validated = $request->validated();
+
+        $categories = $validated['categories'] ?? [];
+        unset($validated['categories']);
+
+        if (isset($validated['technologies']) && is_string($validated['technologies'])) {
+            $validated['technologies'] = array_map('trim', explode(',', $validated['technologies']));
+        }
+
+        $jobVacancy->update($validated);
+
+        if (! empty($categories)) {
+            $jobVacancy->categories()->sync($categories);
+        } else {
+            $jobVacancy->categories()->detach();
+        }
+
+        return redirect()->route('job-vacancy.index')
+            ->with('success', 'Job Vacancy updated successfully');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+    public function show(string $id)
+    {
+        $jobVacancy = JobVacancies::with(['company', 'categories'])->findOrFail($id);
+
+        return view('job-vacancies.show', compact('jobVacancy'));
+    }
+
     public function destroy(string $id)
     {
-        //
+        $jobVacancy = JobVacancies::findOrFail($id);
+        $jobVacancy->delete();
+
+        return redirect()->route('job-vacancy.index')
+            ->with('success', 'Job Vacancy archived successfully');
+    }
+
+    public function restore(string $id)
+    {
+        $jobVacancy = JobVacancies::withTrashed()->findOrFail($id);
+        $jobVacancy->restore();
+
+        return redirect()->route('job-vacancy.index', ['archived' => 'true'])
+            ->with('success', 'Job Vacancy restored successfully');
     }
 }

@@ -26,6 +26,9 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('company', CompanyController::class)->names('company');
     Route::put('company/{id}/restore', [CompanyController::class, 'restore'])->name('company.restore');
+
+    Route::resource('job-vacancy', JobVacanciesController::class)->names('job-vacancy');
+    Route::put('job-vacancy/{id}/restore', [JobVacanciesController::class, 'restore'])->name('job-vacancy.restore');
 });
 
 require __DIR__.'/auth.php';

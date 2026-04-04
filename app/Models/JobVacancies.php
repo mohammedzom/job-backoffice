@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-#[Fillable(['company_id', 'category_id', 'title', 'description', 'salary'])]
+#[Fillable(['company_id', 'title', 'description', 'salary', 'location', 'type', 'status', 'application_deadline', 'technologies', 'view_count', 'apply_count'])]
 class JobVacancies extends Model
 {
     use HasFactory, HasUuids, SoftDeletes;
@@ -23,12 +23,13 @@ class JobVacancies extends Model
     {
         return [
             'deleted_at' => 'datetime',
+            'technologies' => 'array',
         ];
     }
 
     public function categories()
     {
-        return $this->belongsToMany(JobCategory::class, 'category_job');
+        return $this->belongsToMany(JobCategory::class, 'category_job', 'job_id', 'category_id');
     }
 
     public function company()

@@ -14,11 +14,10 @@ return new class extends Migration
         Schema::create('job_vacancies', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('company_id')->constrained('companies')->restrictOnDelete();
-            $table->foreignUuid('category_id')->constrained('job_categories')->restrictOnDelete();
 
             $table->string('title');
             $table->text('description');
-            $table->string('salary');
+            $table->decimal('salary', 10, 2);
             $table->string('location');
             $table->enum('type', ['full_time', 'part_time', 'contract', 'remote', 'hybrid', 'other'])->default('full_time');
             $table->enum('status', ['open', 'closed', 'pending'])->default('pending');

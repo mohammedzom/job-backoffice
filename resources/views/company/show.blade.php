@@ -19,6 +19,7 @@
         <div class="w-full mx-auto px-4 sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-xl">
                 <!-- Header Section -->
+                {{-- owner Name --}}
                 <div class="bg-gradient-to-r from-blue-600 to-indigo-700 px-8 py-12 text-white">
                     <div
                         class="flex flex-col sm:flex-row items-center sm:items-start space-y-4 sm:space-y-0 sm:space-x-6">
@@ -28,15 +29,33 @@
                         </div>
                         <div class="text-center sm:text-left mt-2">
                             <h3 class="text-3xl font-extrabold tracking-tight">{{ $company->name }}</h3>
-                            <p
-                                class="text-blue-100 mt-2 flex justify-center sm:justify-start items-center text-sm font-medium">
-                                <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4">
-                                    </path>
-                                </svg>
-                                {{ $company->industry }}
-                            </p>
+                            <div class="mt-3 flex flex-wrap justify-center sm:justify-start gap-4">
+                                <!-- Industry -->
+                                <p
+                                    class="text-blue-100 flex items-center text-sm font-medium bg-blue-800/30 px-3 py-1 rounded-full">
+                                    <svg class="w-4 h-4 mr-1.5 opacity-80" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4">
+                                        </path>
+                                    </svg>
+                                    {{ $company->industry }}
+                                </p>
+
+                                <!-- Owner Name -->
+                                @if ($company->owner)
+                                    <p
+                                        class="text-blue-100 flex items-center text-sm font-medium bg-indigo-800/30 px-3 py-1 rounded-full">
+                                        <svg class="w-4 h-4 mr-1.5 opacity-80" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z">
+                                            </path>
+                                        </svg>
+                                        {{ __('Owner:') }} {{ $company->owner->name }}
+                                    </p>
+                                @endif
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -129,7 +148,8 @@
                 </div>
 
                 {{-- Tabs Navigation --}}
-                <div class="bg-gray-50 dark:bg-gray-900/20 border-t border-b border-gray-200 dark:border-gray-700 px-6 sm:px-8">
+                <div
+                    class="bg-gray-50 dark:bg-gray-900/20 border-t border-b border-gray-200 dark:border-gray-700 px-6 sm:px-8">
                     <nav class="-mb-px flex space-x-8" aria-label="Tabs">
                         @php $activeTab = request('tab', 'jobs') ?? 'jobs'; @endphp
                         <a href="?tab=jobs"
@@ -310,36 +330,45 @@
                                                     </span>
                                                 </td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-center">
-                                                @if(isset($application->ai_generated_score) && $application->ai_generated_score !== null)
-                                                    @php
-                                                        $score = min(max($application->ai_generated_score * 10, 0), 100);
-                                                        $barColor = match(true) {
-                                                            $score >= 80 => 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.4)]',
-                                                            $score >= 60 => 'bg-green-400',
-                                                            $score >= 45 => 'bg-yellow-400',
-                                                            $score >= 30 => 'bg-orange-400',
-                                                            default => 'bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.4)]'
-                                                        };
-                                                        $textColor = match(true) {
-                                                            $score >= 80 => 'text-emerald-700 dark:text-emerald-400',
-                                                            $score >= 60 => 'text-green-700 dark:text-green-500',
-                                                            $score >= 45 => 'text-yellow-700 dark:text-yellow-500',
-                                                            $score >= 30 => 'text-orange-700 dark:text-orange-500',
-                                                            default => 'text-red-700 dark:text-red-500'
-                                                        };
-                                                    @endphp
-                                                    <div class="flex items-center justify-center space-x-2.5">
-                                                        <div class="w-20 bg-gray-200 dark:bg-gray-700 rounded-full h-1.5 shadow-inner overflow-visible">
-                                                            <div class="{{ $barColor }} h-1.5 rounded-full transition-all duration-500" style="width: {{ $score }}%"></div>
+                                                    @if (isset($application->ai_generated_score) && $application->ai_generated_score !== null)
+                                                        @php
+                                                            $score = min(
+                                                                max($application->ai_generated_score * 10, 0),
+                                                                100,
+                                                            );
+                                                            $barColor = match (true) {
+                                                                $score >= 80
+                                                                    => 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.4)]',
+                                                                $score >= 60 => 'bg-green-400',
+                                                                $score >= 45 => 'bg-yellow-400',
+                                                                $score >= 30 => 'bg-orange-400',
+                                                                default
+                                                                    => 'bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.4)]',
+                                                            };
+                                                            $textColor = match (true) {
+                                                                $score >= 80
+                                                                    => 'text-emerald-700 dark:text-emerald-400',
+                                                                $score >= 60 => 'text-green-700 dark:text-green-500',
+                                                                $score >= 45 => 'text-yellow-700 dark:text-yellow-500',
+                                                                $score >= 30 => 'text-orange-700 dark:text-orange-500',
+                                                                default => 'text-red-700 dark:text-red-500',
+                                                            };
+                                                        @endphp
+                                                        <div class="flex items-center justify-center space-x-2.5">
+                                                            <div
+                                                                class="w-20 bg-gray-200 dark:bg-gray-700 rounded-full h-1.5 shadow-inner overflow-visible">
+                                                                <div class="{{ $barColor }} h-1.5 rounded-full transition-all duration-500"
+                                                                    style="width: {{ $score }}%"></div>
+                                                            </div>
+                                                            <span
+                                                                class="text-xs font-extrabold {{ $textColor }} inline-block w-8 text-left tabular-nums tracking-tight">
+                                                                {{ round($score) }}%
+                                                            </span>
                                                         </div>
-                                                        <span class="text-xs font-extrabold {{ $textColor }} inline-block w-8 text-left tabular-nums tracking-tight">
-                                                            {{ round($score) }}%
-                                                        </span>
-                                                    </div>
-                                                @else
-                                                    <span class="text-gray-400 dark:text-gray-600 text-sm">-</span>
-                                                @endif
-                                            </td>
+                                                    @else
+                                                        <span class="text-gray-400 dark:text-gray-600 text-sm">-</span>
+                                                    @endif
+                                                </td>
                                                 <td class="px-6 py-4 whitespace-nowrap">
                                                     @if (!empty($application->ai_generated_feedback))
                                                         <div class="text-xs text-gray-600 dark:text-gray-400 max-w-[150px] truncate"

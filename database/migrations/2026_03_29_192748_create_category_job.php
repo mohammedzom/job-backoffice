@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignUuid('category_id')->constrained('job_categories')->restrictOnDelete();
             $table->timestamps();
             $table->softDeletes();
+            $table->unique(['job_id', 'category_id']);
         });
     }
 

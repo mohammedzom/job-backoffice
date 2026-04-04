@@ -18,17 +18,22 @@ class DatabaseSeeder extends Seeder
 
     public function run(): void
     {
+
+        // Users
         $this->call([
             UserSeeder::class,
         ]);
+
         $jobData = json_decode(file_get_contents(database_path('./data/job_data.json')), true);
 
+        // Job Categories
         foreach ($jobData['jobCategories'] as $category) {
             JobCategory::firstOrCreate([
                 'name' => $category,
             ]);
         }
 
+        // Companies
         foreach ($jobData['companies'] as $company) {
 
             $company_owner = User::firstOrCreate([
@@ -50,20 +55,23 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
-        foreach ($jobData['jobVacancies'] as $jobVacancy) {
+        // Job Vacancies
+        foreach ($jobData['jobVacancies'] as $jobVacancyData) {
             $jobVacancy = JobVacancies::firstOrCreate([
-                'title' => $jobVacancy['title'],
+                'title' => $jobVacancyData['title'],
             ], [
-                'description' => $jobVacancy['description'],
-                'location' => $jobVacancy['location'],
-                'type' => $jobVacancy['type'],
-                'salary' => $jobVacancy['salary'],
-                'category_id' => JobCategory::where('name', $jobVacancy['category'])->first()->id,
-                'company_id' => Companies::where('name', $jobVacancy['company'])->first()->id,
-                'technologies' => json_encode($jobVacancy['technologies']),
+                'description' => $jobVacancyData['description'],
+                'location' => $jobVacancyData['location'],
+                'type' => $jobVacancyData['type'],
+                'salary' => $jobVacancyData['salary'],
+                'company_id' => Companies::where('name', $jobVacancyData['company'])->first()->id,
+                'technologies' => json_encode($jobVacancyData['technologies']),
             ]);
+            $categoryId = JobCategory::where('name', $jobVacancyData['category'])->first()->id;
+            $jobVacancy->categories()->syncWithoutDetaching([$categoryId]);
         }
 
+        // Job Applications
         $jobApplicationsData = json_decode(file_get_contents(database_path('./data/job_applications.json')), true);
 
         foreach ($jobApplicationsData['jobApplications'] as $jobApplication) {

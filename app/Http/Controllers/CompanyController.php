@@ -6,6 +6,7 @@ use App\Http\Requests\Companies\CompaniesCreateRequest;
 use App\Http\Requests\Companies\CompaniesUpdateRequest;
 use App\Models\Companies;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth as FacadesAuth;
 
 class CompanyController extends Controller
 {
@@ -30,7 +31,13 @@ class CompanyController extends Controller
 
     public function store(CompaniesCreateRequest $request)
     {
-        Companies::create($request->validated());
+        Companies::create([
+            'name' => $request->name,
+            'industry' => $request->industry,
+            'website' => $request->website,
+            'address' => $request->address,
+            'owner_id' => FacadesAuth::id(),
+        ]);
 
         return redirect()->route('company.index')
             ->with('success', __('Company added successfully'));
@@ -45,11 +52,8 @@ class CompanyController extends Controller
 
     public function update(CompaniesUpdateRequest $request, string $id)
     {
-
         $company = Companies::findOrFail($id);
-        $company->update([
-            'name' => $request->name,
-        ]);
+        $company->update($request->validated());
 
         return redirect()->route('company.index')
             ->with('success', 'Company updated successfully');

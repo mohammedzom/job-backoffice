@@ -57,7 +57,12 @@ class UserController extends Controller
      */
     public function destroy(string $id)
     {
+
         $user = User::findOrFail($id);
+        foreach ($user->jobApplications as $jobApplication) {
+            $jobApplication->job()->decrement('apply_count');
+            $jobApplication->delete();
+        }
         $user->delete();
 
         return redirect()->route('user.index')->with('success', 'User archived successfully');
@@ -66,7 +71,14 @@ class UserController extends Controller
     public function restore(string $id)
     {
         $user = User::withTrashed()->findOrFail($id);
+        $deletionTimeBuffer = $user->deleted_at->subSeconds(5);
         $user->restore();
+        $trashedApplications = $user->jobApplications()->onlyTrashed()->where('deleted_at', '>=', $deletionTimeBuffer)->get();
+
+        foreach ($trashedApplications as $jobApplication) {
+            $jobApplication->job()->increment('apply_count');
+            $jobApplication->restore();
+        }
 
         return redirect()->back()->with('success', 'User restored successfully.');
     }

@@ -18,6 +18,8 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->enum('role', ['admin', 'job_seeker', 'company'])->default('job_seeker');
             $table->string('password');
+            $table->timestamp('last_login')->nullable();
+            $table->boolean('is_active')->default(false);
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();

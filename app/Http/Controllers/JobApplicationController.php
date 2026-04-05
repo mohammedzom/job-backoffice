@@ -50,6 +50,7 @@ class JobApplicationController extends Controller
     public function destroy(string $id)
     {
         $jobApplication = JobApplications::findOrFail($id);
+        $jobApplication->job()->decrement('apply_count');
         $jobApplication->delete();
 
         return redirect()->route('job-application.index')
@@ -60,6 +61,7 @@ class JobApplicationController extends Controller
     {
         $jobApplication = JobApplications::withTrashed()->findOrFail($id);
         $jobApplication->restore();
+        $jobApplication->job()->increment('apply_count');
 
         return redirect()->route('job-application.index')
             ->with('success', 'Job Application restored successfully');

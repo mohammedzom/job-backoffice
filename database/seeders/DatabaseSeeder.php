@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Companies;
 use App\Models\JobApplications;
 use App\Models\JobCategory;
+use App\Models\JobUserViews;
 use App\Models\JobVacancies;
 use App\Models\Resumes;
 use App\Models\User;
@@ -84,7 +85,19 @@ class DatabaseSeeder extends Seeder
                     'email_verified_at' => now(),
                 ]
             );
-            $jobVacancyIds = JobVacancies::inRandomOrder()->first()->id;
+            $jobVacancy = JobVacancies::inRandomOrder()->first();
+            $jobVacancyIds = $jobVacancy->id;
+
+            $viewRecord = JobUserViews::firstOrCreate([
+                'job_id' => $jobVacancy->id,
+                'user_id' => $applicantUser->id,
+            ]);
+
+            if ($viewRecord->wasRecentlyCreated) {
+                $jobVacancy->increment('view_count');
+            }
+            $jobVacancy->increment('view_count', rand(1, 5));
+            $jobVacancy->increment('apply_count');
 
             $resume_data = $jobApplication['resume'];
             $resume = Resumes::firstOrCreate([

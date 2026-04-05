@@ -6,7 +6,7 @@ use App\Models\JobApplications;
 use App\Models\JobVacancies;
 use App\Models\User;
 
-class DashbordController extends Controller
+class DashboardController extends Controller
 {
     public function index()
     {

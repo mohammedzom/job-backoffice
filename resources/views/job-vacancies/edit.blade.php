@@ -64,27 +64,17 @@
                                         </div>
                                     </div>
                                 @else
-                                    <div x-data="{
-                                        init() {
-                                            new TomSelect(this.$refs.companySelect, {
-                                                create: false,
-                                                allowEmptyOption: false,
-                                                placeholder: '{{ __('Search and select a company...') }}',
-                                                maxOptions: 100,
-                                                render: {
-                                                    option: function(data, escape) {
-                                                        return '<div class=\'flex items-center gap-2 py-0.5\'><span class=\'inline-flex items-center justify-center w-6 h-6 rounded bg-indigo-100 text-indigo-600 text-xs font-bold\'>' + escape(data.text.charAt(0).toUpperCase()) + '</span><span>' + escape(data.text) + '</span></div>';
-                                                    },
-                                                    item: function(data, escape) {
-                                                        return '<div class=\'flex items-center gap-1\'><span class=\'inline-flex items-center justify-center w-5 h-5 rounded bg-indigo-100 text-indigo-600 text-xs font-bold\'>' + escape(data.text.charAt(0).toUpperCase()) + '</span>' + escape(data.text) + '</div>';
-                                                    }
-                                                }
-                                            });
-                                        }
-                                    }">
-                                        <select x-ref="companySelect" name="company_id" id="company_id"
-                                            class="hidden {{ $errors->has('company_id') ? 'border-red-500' : '' }}">
-                                            <option value="" disabled {{ old('company_id', $jobVacancy->company_id) ? '' : 'selected' }}>{{ __('Select a company') }}</option>
+                                    <div class="relative">
+                                        <select name="company_id" id="company_id"
+                                            class="block w-full px-3.5 py-2.5 pe-10 text-sm rounded-xl
+                                                   bg-white dark:bg-gray-900/50
+                                                   border {{ $errors->has('company_id') ? 'border-red-400 dark:border-red-500' : 'border-gray-300 dark:border-gray-600' }}
+                                                   text-gray-900 dark:text-gray-100
+                                                   focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 dark:focus:border-indigo-400
+                                                   appearance-none cursor-pointer transition-all duration-200">
+                                            <option value="" disabled {{ old('company_id', $jobVacancy->company_id) ? '' : 'selected' }}>
+                                                {{ __('Select a company') }}
+                                            </option>
                                             @foreach ($companies as $company)
                                                 <option value="{{ $company->id }}"
                                                     {{ old('company_id', $jobVacancy->company_id) == $company->id ? 'selected' : '' }}>
@@ -92,6 +82,12 @@
                                                 </option>
                                             @endforeach
                                         </select>
+                                        {{-- Custom chevron icon --}}
+                                        <div class="pointer-events-none absolute inset-y-0 end-0 flex items-center pe-3">
+                                            <svg class="w-4 h-4 text-gray-400 dark:text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"/>
+                                            </svg>
+                                        </div>
                                     </div>
                                     @error('company_id')
                                         <p class="mt-2 text-sm text-red-500 dark:text-red-400 font-medium">{{ $message }}</p>
@@ -103,7 +99,7 @@
                             <div class="md:col-span-2">
                                 <label for="title" class="block text-sm font-semibold text-gray-700 dark:text-gray-300">{{ __('Job Title') }}</label>
                                 <input type="text" name="title" id="title"
-                                    class="mt-2 block w-full rounded-xl border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900/50 text-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm transition duration-150 {{ $errors->has('title') ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : '' }}"
+                                    class="mt-2 block w-full px-3.5 py-2.5 rounded-xl border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900/50 text-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm transition duration-150 {{ $errors->has('title') ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : '' }}"
                                     value="{{ old('title', $jobVacancy->title) }}"
                                     placeholder="{{ __('e.g. Senior Software Engineer') }}">
                                 @error('title')
@@ -115,7 +111,7 @@
                             <div>
                                 <label for="location" class="block text-sm font-semibold text-gray-700 dark:text-gray-300">{{ __('Location') }}</label>
                                 <input type="text" name="location" id="location"
-                                    class="mt-2 block w-full rounded-xl border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900/50 text-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm transition duration-150 {{ $errors->has('location') ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : '' }}"
+                                    class="mt-2 block w-full px-3.5 py-2.5 rounded-xl border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900/50 text-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm transition duration-150 {{ $errors->has('location') ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : '' }}"
                                     value="{{ old('location', $jobVacancy->location) }}"
                                     placeholder="{{ __('e.g. San Francisco, CA or Remote') }}">
                                 @error('location')
@@ -352,7 +348,7 @@
                             <div class="md:col-span-2">
                                 <label for="description" class="block text-sm font-semibold text-gray-700 dark:text-gray-300">{{ __('Job Description') }}</label>
                                 <textarea name="description" id="description" rows="6"
-                                    class="mt-2 block w-full rounded-xl border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900/50 text-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm transition duration-150 {{ $errors->has('description') ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : '' }}"
+                                    class="mt-2 block w-full px-3.5 py-2.5 rounded-xl border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900/50 text-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm transition duration-150 {{ $errors->has('description') ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : '' }}"
                                     placeholder="{{ __('Describe the responsibilities, requirements, and benefits...') }}">{{ old('description', $jobVacancy->description) }}</textarea>
                                 @error('description')
                                     <p class="mt-2 text-sm text-red-500 dark:text-red-400 font-medium">{{ $message }}</p>
@@ -395,7 +391,7 @@
     <style>
         /* ── TomSelect ── */
         .ts-control { border-radius: 0.75rem; border-color: rgb(209 213 219); background-color: transparent; padding: 0.5rem 0.75rem; font-size: 0.875rem; line-height: 1.25rem; box-shadow: none; }
-        .dark .ts-control { border-color: rgb(75 85 99); color: rgb(243 244 246); }
+        .dark .ts-control { border-color: rgb(75 85 99); background-color: rgb(17 24 39 / 0.5); color: rgb(243 244 246); }
         .ts-control.focus { border-color: rgb(99 102 241); box-shadow: 0 0 0 1px rgb(99 102 241); }
         .dark .ts-control.focus { border-color: rgb(99 102 241); box-shadow: 0 0 0 1px rgb(99 102 241); }
         .ts-dropdown { border-radius: 0.75rem; border-color: rgb(209 213 219); background-color: white; box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1); }

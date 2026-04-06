@@ -1,3 +1,705 @@
+/* =============================================================================
+   APP.CSS — Job Backoffice Design System
+   Tailwind CSS v3 | Dark Mode (class) | i18n: LTR (en) + RTL (ar)
+   =============================================================================
+
+   Load order:
+     1. Google Fonts   — Inter (Latin) + Cairo (Arabic)
+     2. Tailwind base  — HTML reset + typographic defaults
+     3. Design tokens  — CSS custom properties (colors, spacing, radii…)
+     4. Base overrides — html/body defaults, scrollbars, selection
+     5. RTL utilities  — direction-aware helpers
+     6. Component layer — reusable classes built on tokens
+     7. Utility layer  — custom one-off utilities
+   ============================================================================= */
+
+
+/* =============================================================================
+   1. GOOGLE FONTS
+   ============================================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Cairo:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+
+/* =============================================================================
+   2. TAILWIND DIRECTIVES
+   ============================================================================= */
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+/* =============================================================================
+   3. DESIGN TOKENS (CSS Custom Properties)
+   Applied on :root for light mode; overridden in [data-theme="dark"] / .dark
+   ============================================================================= */
+
+@layer base {
+    :root {
+        /* --- Brand --- */
+        --color-brand-50:  #eef2ff;
+        --color-brand-100: #e0e7ff;
+        --color-brand-200: #c7d2fe;
+        --color-brand-300: #a5b4fc;
+        --color-brand-400: #818cf8;
+        --color-brand-500: #6366f1;
+        --color-brand-600: #4f46e5;
+        --color-brand-700: #4338ca;
+        --color-brand-800: #3730a3;
+        --color-brand-900: #312e81;
+        --color-brand-950: #1e1b4b;
+
+        /* --- Backgrounds (Light) --- */
+        --bg-base:         #f8fafc;
+        --bg-raised:       #ffffff;
+        --bg-overlay:      #f1f5f9;
+        --bg-subtle:       #e2e8f0;
+
+        /* --- Text (Light) --- */
+        --text-primary:    #0f172a;
+        --text-secondary:  #475569;
+        --text-tertiary:   #94a3b8;
+        --text-on-brand:   #ffffff;
+
+        /* --- Borders (Light) --- */
+        --border-default:  #e2e8f0;
+        --border-strong:   #cbd5e1;
+        --border-brand:    #6366f1;
+
+        /* --- Shadows (Light) --- */
+        --shadow-card:     0 1px 3px 0 rgb(0 0 0 / 0.06), 0 1px 2px -1px rgb(0 0 0 / 0.06);
+        --shadow-card-md:  0 4px 12px -2px rgb(0 0 0 / 0.08), 0 2px 6px -2px rgb(0 0 0 / 0.06);
+        --shadow-card-lg:  0 12px 32px -4px rgb(0 0 0 / 0.12), 0 4px 12px -2px rgb(0 0 0 / 0.08);
+
+        /* --- Sidebar dimensions --- */
+        --sidebar-width: 260px;
+
+        /* --- Transitions --- */
+        --duration-fast:   150ms;
+        --duration-base:   250ms;
+        --duration-slow:   350ms;
+        --ease-default:    cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Dark mode overrides — activated by the 'dark' class on <html> */
+    .dark {
+        /* --- Backgrounds (Dark) --- */
+        --bg-base:         #0f172a;
+        --bg-raised:       #1e293b;
+        --bg-overlay:      #293548;
+        --bg-subtle:       #334155;
+
+        /* --- Text (Dark) --- */
+        --text-primary:    #f1f5f9;
+        --text-secondary:  #94a3b8;
+        --text-tertiary:   #64748b;
+
+        /* --- Borders (Dark) --- */
+        --border-default:  #334155;
+        --border-strong:   #475569;
+
+        /* --- Shadows (Dark) --- */
+        --shadow-card:     0 4px 20px 0 rgb(0 0 0 / 0.35);
+        --shadow-card-md:  0 8px 32px 0 rgb(0 0 0 / 0.45);
+        --shadow-card-lg:  0 16px 48px 0 rgb(0 0 0 / 0.55);
+    }
+}
+
+
+/* =============================================================================
+   4. BASE OVERRIDES
+   ============================================================================= */
+
+@layer base {
+    /*
+     * html — Sets the directional foundation.
+     *   - [dir="ltr"] → normal left-to-right (English)
+     *   - [dir="rtl"] → reversed right-to-left (Arabic)
+     * The dir attribute is applied in the <html> tag driven by Laravel's locale.
+     */
+    html {
+        scroll-behavior: smooth;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+        background-color: var(--bg-base);
+        color: var(--text-primary);
+        font-family: 'Inter', 'Cairo', ui-sans-serif, system-ui, sans-serif;
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        transition:
+            background-color var(--duration-slow) var(--ease-default),
+            color var(--duration-slow) var(--ease-default);
+    }
+
+    /*
+     * RTL — Arabic locale.
+     * When lang="ar" (or when dir="rtl" is set), Cairo is preferred.
+     * Cairo covers all Latin glyphs too, so no font-face switch is needed.
+     */
+    [dir="rtl"] body,
+    :lang(ar) body {
+        font-family: 'Cairo', 'Inter', ui-sans-serif, system-ui, sans-serif;
+        letter-spacing: 0;            /* Arabic needs zero letter-spacing */
+        word-spacing: 0.02em;
+    }
+
+    /* Headings */
+    h1, h2, h3, h4, h5, h6 {
+        color: var(--text-primary);
+        font-weight: 600;
+        line-height: 1.3;
+        letter-spacing: -0.01em;
+    }
+
+    [dir="rtl"] h1,
+    [dir="rtl"] h2,
+    [dir="rtl"] h3,
+    [dir="rtl"] h4,
+    [dir="rtl"] h5,
+    [dir="rtl"] h6 {
+        letter-spacing: 0;
+    }
+
+    /* Links */
+    a {
+        color: var(--color-brand-600);
+        text-decoration: none;
+        transition: color var(--duration-fast) var(--ease-default);
+    }
+
+    .dark a {
+        color: var(--color-brand-400);
+    }
+
+    a:hover {
+        color: var(--color-brand-500);
+    }
+
+    /* Focus ring — accessible, on-brand */
+    :focus-visible {
+        outline: 2px solid var(--color-brand-500);
+        outline-offset: 2px;
+        border-radius: 4px;
+    }
+
+    /* Selection */
+    ::selection {
+        background-color: rgb(99 102 241 / 0.2);
+        color: var(--text-primary);
+    }
+
+    /* Custom scrollbar (webkit) */
+    ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background-color: var(--border-strong);
+        border-radius: 99px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background-color: var(--color-brand-400);
+    }
+
+    /* Images */
+    img {
+        max-width: 100%;
+        height: auto;
+    }
+
+    /* Horizontal rule */
+    hr {
+        border-color: var(--border-default);
+        margin-block: 1.5rem;
+    }
+}
+
+
+/* =============================================================================
+   5. RTL DIRECTION — LAYOUT HELPERS
+   ============================================================================= */
+
+@layer utilities {
+    /*
+     * Sidebar animation direction:
+     * In LTR the sidebar slides in from the left  (-translate-x-full).
+     * In RTL the sidebar slides in from the right (+translate-x-full).
+     * The sidebar in navigation.blade.php uses Alpine transitions; RTL classes
+     * override them so the correct enter/leave direction is applied.
+     */
+    [dir="rtl"] .rtl\:translate-x-full {
+        --tw-translate-x: 100%;
+        transform: translateX(var(--tw-translate-x));
+    }
+
+    [dir="rtl"] .rtl\:-translate-x-full {
+        --tw-translate-x: -100%;
+        transform: translateX(var(--tw-translate-x));
+    }
+
+    /* Active nav indicator: left → right in RTL */
+    [dir="rtl"] .nav-indicator {
+        left: auto;
+        right: 0;
+        border-radius: 0.25rem 0 0 0.25rem; /* round left side instead of right */
+    }
+
+    /* Text alignment helpers */
+    .text-start  { text-align: start; }
+    .text-end    { text-align: end; }
+
+    /* Margin/padding start/end (logical properties) */
+    .ms-auto { margin-inline-start: auto; }
+    .me-auto { margin-inline-end: auto; }
+}
+
+
+/* =============================================================================
+   6. COMPONENT LAYER
+   ============================================================================= */
+
+@layer components {
+
+    /* -------------------------------------------------------------------------
+       Page Layout
+       ------------------------------------------------------------------------- */
+
+    .page-wrapper {
+        @apply min-h-screen flex flex-col;
+    }
+
+    .page-content {
+        @apply flex-1 p-6 lg:p-8;
+    }
+
+    .page-header {
+        @apply mb-6 flex flex-wrap items-center justify-between gap-4;
+    }
+
+    .page-title {
+        @apply text-2xl font-bold text-gray-900 dark:text-gray-50 tracking-tight;
+    }
+
+    .page-subtitle {
+        @apply mt-1 text-sm text-gray-500 dark:text-gray-400;
+    }
+
+
+    /* -------------------------------------------------------------------------
+       Cards
+       ------------------------------------------------------------------------- */
+
+    .card {
+        @apply bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700/60 shadow-card overflow-hidden transition-all duration-300;
+    }
+
+    .card:hover {
+        @apply shadow-card-md;
+    }
+
+    .card-header {
+        @apply flex items-center justify-between px-6 py-4 border-b border-gray-100 dark:border-slate-700/60;
+    }
+
+    .card-title {
+        @apply text-base font-semibold text-gray-900 dark:text-gray-100;
+    }
+
+    .card-body {
+        @apply p-6;
+    }
+
+    .card-footer {
+        @apply px-6 py-4 border-t border-gray-100 dark:border-slate-700/60 bg-gray-50/50 dark:bg-slate-800/50;
+    }
+
+    /* Stat card variant */
+    .stat-card {
+        @apply card p-6 flex flex-col gap-3;
+    }
+
+    .stat-card-value {
+        @apply text-3xl font-bold text-gray-900 dark:text-gray-50;
+    }
+
+    .stat-card-label {
+        @apply text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide;
+    }
+
+
+    /* -------------------------------------------------------------------------
+       Buttons
+       ------------------------------------------------------------------------- */
+
+    /* Base button reset */
+    .btn {
+        @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-xl border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-slate-900 disabled:opacity-50 disabled:cursor-not-allowed select-none;
+    }
+
+    /* Primary — brand filled */
+    .btn-primary {
+        @apply btn bg-brand-600 border-brand-600 text-white hover:bg-brand-700 hover:border-brand-700 active:bg-brand-800 focus:ring-brand-500 shadow-sm hover:shadow-md;
+    }
+
+    /* Secondary — ghost with border */
+    .btn-secondary {
+        @apply btn bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-600 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-slate-700 hover:border-gray-300 dark:hover:border-slate-500 focus:ring-brand-500;
+    }
+
+    /* Danger */
+    .btn-danger {
+        @apply btn bg-red-600 border-red-600 text-white hover:bg-red-700 hover:border-red-700 active:bg-red-800 focus:ring-red-500 shadow-sm hover:shadow-md;
+    }
+
+    /* Warning */
+    .btn-warning {
+        @apply btn bg-amber-500 border-amber-500 text-white hover:bg-amber-600 hover:border-amber-600 focus:ring-amber-400 shadow-sm;
+    }
+
+    /* Success */
+    .btn-success {
+        @apply btn bg-emerald-600 border-emerald-600 text-white hover:bg-emerald-700 focus:ring-emerald-500 shadow-sm;
+    }
+
+    /* Ghost — no background */
+    .btn-ghost {
+        @apply btn bg-transparent border-transparent text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700/50 focus:ring-brand-500;
+    }
+
+    /* Icon-only button */
+    .btn-icon {
+        @apply btn p-2 aspect-square rounded-xl;
+    }
+
+    /* Size variants */
+    .btn-sm {
+        @apply px-3 py-1.5 text-xs rounded-lg;
+    }
+
+    .btn-lg {
+        @apply px-6 py-3 text-base rounded-2xl;
+    }
+
+
+    /* -------------------------------------------------------------------------
+       Form Inputs
+       ------------------------------------------------------------------------- */
+
+    .input {
+        @apply block w-full px-4 py-2.5 text-sm text-gray-900 dark:text-gray-100 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-xl placeholder-gray-400 dark:placeholder-gray-500 shadow-inner-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-brand-500/40 focus:border-brand-500 dark:focus:border-brand-400;
+    }
+
+    .input-label {
+        @apply block mb-1.5 text-sm font-medium text-gray-700 dark:text-gray-300;
+    }
+
+    .input-hint {
+        @apply mt-1 text-xs text-gray-400 dark:text-gray-500;
+    }
+
+    .input-error-msg {
+        @apply mt-1 text-xs text-red-500 dark:text-red-400;
+    }
+
+    /* Input with icon (start-side) */
+    .input-group {
+        @apply relative flex items-center;
+    }
+
+    .input-group-icon {
+        @apply absolute start-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-gray-500 pointer-events-none;
+    }
+
+    .input-group .input {
+        @apply ps-10;
+    }
+
+    /* Select */
+    .select {
+        @apply input appearance-none cursor-pointer;
+    }
+
+    /* Textarea */
+    .textarea {
+        @apply input resize-none;
+    }
+
+
+    /* -------------------------------------------------------------------------
+       Badges
+       ------------------------------------------------------------------------- */
+
+    .badge {
+        @apply inline-flex items-center gap-1 px-2.5 py-0.5 text-xs font-semibold rounded-full border;
+    }
+
+    .badge-brand  { @apply badge bg-brand-50 dark:bg-brand-500/15 text-brand-700 dark:text-brand-300 border-brand-100 dark:border-brand-500/25; }
+    .badge-success{ @apply badge bg-emerald-50 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-100 dark:border-emerald-500/25; }
+    .badge-warning{ @apply badge bg-amber-50 dark:bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-100 dark:border-amber-500/25; }
+    .badge-danger { @apply badge bg-red-50 dark:bg-red-500/15 text-red-700 dark:text-red-300 border-red-100 dark:border-red-500/25; }
+    .badge-neutral{ @apply badge bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-300 border-gray-200 dark:border-slate-600; }
+    .badge-info   { @apply badge bg-sky-50 dark:bg-sky-500/15 text-sky-700 dark:text-sky-300 border-sky-100 dark:border-sky-500/25; }
+
+
+    /* -------------------------------------------------------------------------
+       Tables
+       ------------------------------------------------------------------------- */
+
+    .table-wrapper {
+        @apply w-full overflow-x-auto rounded-2xl border border-gray-100 dark:border-slate-700/60;
+    }
+
+    .table {
+        @apply w-full text-sm text-start;
+    }
+
+    .table thead {
+        @apply bg-gray-50 dark:bg-slate-800/60;
+    }
+
+    .table th {
+        @apply px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider text-start whitespace-nowrap;
+    }
+
+    .table tbody tr {
+        @apply border-t border-gray-100 dark:border-slate-700/60 transition-colors duration-150 hover:bg-gray-50/60 dark:hover:bg-slate-700/30;
+    }
+
+    .table td {
+        @apply px-4 py-3.5 text-gray-700 dark:text-gray-300 whitespace-nowrap;
+    }
+
+
+    /* -------------------------------------------------------------------------
+       Alerts / Notifications
+       ------------------------------------------------------------------------- */
+
+    .alert {
+        @apply relative flex items-start gap-3 p-4 rounded-xl border text-sm;
+    }
+
+    .alert-success { @apply alert bg-emerald-50 dark:bg-emerald-500/10 border-emerald-200 dark:border-emerald-500/25 text-emerald-800 dark:text-emerald-300; }
+    .alert-danger  { @apply alert bg-red-50 dark:bg-red-500/10 border-red-200 dark:border-red-500/25 text-red-800 dark:text-red-300; }
+    .alert-warning { @apply alert bg-amber-50 dark:bg-amber-500/10 border-amber-200 dark:border-amber-500/25 text-amber-800 dark:text-amber-300; }
+    .alert-info    { @apply alert bg-sky-50 dark:bg-sky-500/10 border-sky-200 dark:border-sky-500/25 text-sky-800 dark:text-sky-300; }
+
+
+    /* -------------------------------------------------------------------------
+       Modal Overlay
+       ------------------------------------------------------------------------- */
+
+    .modal-backdrop {
+        @apply fixed inset-0 z-40 bg-gray-900/60 dark:bg-black/70 backdrop-blur-sm;
+    }
+
+    .modal-panel {
+        @apply relative bg-white dark:bg-slate-800 rounded-2xl shadow-card-lg border border-gray-100 dark:border-slate-700/60 w-full max-w-lg mx-auto my-8 overflow-hidden;
+    }
+
+    .modal-header {
+        @apply flex items-center justify-between px-6 py-4 border-b border-gray-100 dark:border-slate-700/60;
+    }
+
+    .modal-title {
+        @apply text-base font-semibold text-gray-900 dark:text-gray-100;
+    }
+
+    .modal-body {
+        @apply px-6 py-5;
+    }
+
+    .modal-footer {
+        @apply flex items-center justify-end gap-3 px-6 py-4 border-t border-gray-100 dark:border-slate-700/60 bg-gray-50/50 dark:bg-slate-800/50;
+    }
+
+
+    /* -------------------------------------------------------------------------
+       Sidebar Nav Link
+       ------------------------------------------------------------------------- */
+
+    .sidebar-link {
+        @apply relative flex items-center gap-3 px-4 py-3 w-full text-sm font-medium text-gray-500 dark:text-gray-400 rounded-xl border border-transparent transition-all duration-200 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100/60 dark:hover:bg-slate-700/50;
+    }
+
+    .sidebar-link.active {
+        @apply text-brand-700 dark:text-brand-300 bg-brand-50 dark:bg-brand-500/10 border-brand-100/60 dark:border-brand-500/20 font-semibold shadow-sm;
+    }
+
+    /* Active indicator bar — LTR: left side | RTL: right side */
+    .sidebar-link.active::before {
+        content: '';
+        @apply absolute top-1/4 bottom-1/4 start-0 w-1 rounded-e-md bg-gradient-to-b from-brand-500 to-violet-500;
+    }
+
+
+    /* -------------------------------------------------------------------------
+       Skeleton / Loading Shimmer
+       ------------------------------------------------------------------------- */
+
+    .skeleton {
+        @apply rounded-lg bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 dark:from-slate-700 dark:via-slate-600 dark:to-slate-700 bg-[length:200%_100%];
+        animation: shimmer 2s linear infinite;
+    }
+
+
+    /* -------------------------------------------------------------------------
+       Dividers
+       ------------------------------------------------------------------------- */
+
+    .divider {
+        @apply flex items-center gap-3 text-xs text-gray-400 dark:text-gray-500 uppercase tracking-widest;
+    }
+
+    .divider::before,
+    .divider::after {
+        content: '';
+        @apply flex-1 h-px bg-gray-200 dark:bg-slate-700;
+    }
+
+
+    /* -------------------------------------------------------------------------
+       Empty States
+       ------------------------------------------------------------------------- */
+
+    .empty-state {
+        @apply flex flex-col items-center justify-center gap-3 py-16 text-center;
+    }
+
+    .empty-state-icon {
+        @apply w-12 h-12 text-gray-300 dark:text-slate-600;
+    }
+
+    .empty-state-title {
+        @apply text-sm font-semibold text-gray-500 dark:text-gray-400;
+    }
+
+    .empty-state-description {
+        @apply text-xs text-gray-400 dark:text-gray-500;
+    }
+
+
+    /* -------------------------------------------------------------------------
+       Avatar
+       ------------------------------------------------------------------------- */
+
+    .avatar {
+        @apply inline-flex items-center justify-center rounded-full bg-gradient-brand text-white font-semibold shrink-0;
+    }
+
+    .avatar-sm { @apply avatar w-8 h-8 text-xs; }
+    .avatar-md { @apply avatar w-10 h-10 text-sm; }
+    .avatar-lg { @apply avatar w-12 h-12 text-base; }
+
+
+    /* -------------------------------------------------------------------------
+       Dropdown
+       ------------------------------------------------------------------------- */
+
+    .dropdown-menu {
+        @apply absolute z-50 min-w-[180px] bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-700 shadow-card-lg py-1 animate-fade-in-scale;
+    }
+
+    .dropdown-item {
+        @apply flex items-center gap-2.5 w-full px-4 py-2.5 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-slate-700/50 transition-colors duration-150;
+    }
+
+    .dropdown-divider {
+        @apply my-1 border-t border-gray-100 dark:border-slate-700;
+    }
+
+
+    /* -------------------------------------------------------------------------
+       Toast Notifications
+       ------------------------------------------------------------------------- */
+
+    .toast {
+        @apply flex items-start gap-3 px-4 py-3.5 rounded-xl border shadow-card-md text-sm min-w-[280px] max-w-sm animate-slide-in-right;
+    }
+
+    .toast-success { @apply toast bg-emerald-50 dark:bg-emerald-500/10 border-emerald-200 dark:border-emerald-500/30 text-emerald-800 dark:text-emerald-300; }
+    .toast-danger  { @apply toast bg-red-50 dark:bg-red-500/10 border-red-200 dark:border-red-500/30 text-red-800 dark:text-red-300; }
+    .toast-info    { @apply toast bg-sky-50 dark:bg-sky-500/10 border-sky-200 dark:border-sky-500/30 text-sky-800 dark:text-sky-300; }
+    .toast-warning { @apply toast bg-amber-50 dark:bg-amber-500/10 border-amber-200 dark:border-amber-500/30 text-amber-800 dark:text-amber-300; }
+
+    /* RTL: toast slides in from the left */
+    [dir="rtl"] .toast {
+        @apply animate-slide-in-left;
+    }
+}
+
+
+/* =============================================================================
+   7. UTILITY LAYER (Custom one-off utilities)
+   ============================================================================= */
+
+@layer utilities {
+    /* Glassmorphism surface */
+    .glass {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(16px) saturate(180%);
+        -webkit-backdrop-filter: blur(16px) saturate(180%);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .dark .glass {
+        background: rgba(30, 41, 59, 0.75);
+        border-color: rgba(255, 255, 255, 0.08);
+    }
+
+    /* Subtle gradient text */
+    .text-gradient-brand {
+        background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    /* Gradient border (box-shadow trick) */
+    .border-gradient {
+        position: relative;
+        background-clip: padding-box;
+    }
+
+    /* Truncate multiple lines */
+    .line-clamp-2 {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .line-clamp-3 {
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    /* Scrollbar none */
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+    /* Transition base for theme toggle */
+    .theme-transition {
+        transition:
+            background-color 350ms cubic-bezier(0.4, 0, 0.2, 1),
+            border-color 350ms cubic-bezier(0.4, 0, 0.2, 1),
+            color 200ms cubic-bezier(0.4, 0, 0.2, 1),
+            box-shadow 200ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Print */
+    @media print {
+        .no-print { display: none !important; }
+    }
+}

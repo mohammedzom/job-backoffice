@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Companies;
 use App\Models\JobApplications;
 use App\Models\JobVacancies;
 use App\Models\User;
@@ -9,7 +10,7 @@ use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
-    private $user;
+    private User $user;
 
     public function __construct()
     {
@@ -19,23 +20,42 @@ class DashboardController extends Controller
     public function index()
     {
         $isCompany = $this->user->role === 'company';
-        $analytics = $isCompany ? $this->getCompanyDashboardData() : $this->getAdminDashboardData();
-        $user = $this->user;
+        $analytics = $isCompany
+            ? $this->getCompanyDashboardData()
+            : $this->getAdminDashboardData();
 
-        return view('dashboard.index', compact('analytics', 'user'));
+        return view('dashboard.index', [
+            'analytics' => $analytics,
+            'user' => $this->user,
+        ]);
     }
 
-    private function getCompanyDashboardData()
+    private function getCompanyDashboardData(): array
     {
-        $activeUsers_last_30_days = User::where('role', 'job_seeker')->where('last_login', '>=', now()->subDays(30))->count();
+        $companyId = $this->user->company->id;
 
-        $totalJobs = JobVacancies::where('company_id', $this->user->company->id)->whereNull('deleted_at')->count();
+        $totalJobs = JobVacancies::whereNull('deleted_at')->where('company_id', $companyId)->count();
+        $totalApplications = JobApplications::whereHas('job', fn ($q) => $q->where('company_id', $companyId))->whereNull('deleted_at')->count();
+        $totalViews = JobVacancies::whereNull('deleted_at')->where('company_id', $companyId)->sum('view_count');
+        $activeUsers = User::where('role', 'job_seeker')->where('last_login', '>=', now()->subDays(30))->count();
 
-        $totalApplications = JobApplications::whereHas('job', fn ($q) => $q->where('company_id', $this->user->company->id))->whereNull('deleted_at')->count();
+        /** @var array<string,int> */
+        $applicationStatusBreakdown = JobApplications::whereHas('job', fn ($q) => $q->where('company_id', $companyId))
+            ->whereNull('deleted_at')
+            ->get()
+            ->groupBy('status')
+            ->map(fn ($g) => $g->count())
+            ->toArray();
 
-        $mostAppliedJobs = JobVacancies::with('company')->where('company_id', $this->user->company->id)->whereNull('deleted_at')->orderByDesc('apply_count')->limit(5)->get();
+        $mostAppliedJobs = JobVacancies::with('company')
+            ->whereNull('deleted_at')
+            ->where('company_id', $companyId)
+            ->orderByDesc('apply_count')
+            ->limit(5)
+            ->get();
 
-        $ConversionData = JobVacancies::where('company_id', $this->user->company->id)->whereNull('deleted_at')
+        $conversionData = JobVacancies::whereNull('deleted_at')
+            ->where('company_id', $companyId)
             ->where('view_count', '>', 0)
             ->orderByRaw('(apply_count / view_count) DESC')
             ->limit(5)
@@ -46,28 +66,48 @@ class DashboardController extends Controller
                 return $job;
             });
 
-        $analytics = [
-            'activeUsers_last_30_days' => $activeUsers_last_30_days,
+        $recentApplications = JobApplications::with(['job', 'user'])
+            ->whereHas('job', fn ($q) => $q->where('company_id', $companyId))
+            ->whereNull('deleted_at')
+            ->latest()
+            ->limit(6)
+            ->get();
+
+        return [
+            'activeUsers_last_30_days' => $activeUsers,
             'totalJobs' => $totalJobs,
             'totalApplications' => $totalApplications,
+            'totalViews' => $totalViews,
+            'totalCompanies' => null, // N/A for company role
+            'applicationStatusBreakdown' => $applicationStatusBreakdown,
             'mostAppliedJobs' => $mostAppliedJobs,
-            'conversionData' => $ConversionData,
+            'conversionData' => $conversionData,
+            'recentApplications' => $recentApplications,
         ];
-
-        return $analytics;
-
     }
 
-    private function getAdminDashboardData()
+    private function getAdminDashboardData(): array
     {
-        $activeUsers_last_30_days = User::where('last_login', '>=', now()->subDays(30))->count();
         $totalJobs = JobVacancies::whereNull('deleted_at')->count();
-
         $totalApplications = JobApplications::whereNull('deleted_at')->count();
+        $totalCompanies = Companies::whereNull('deleted_at')->count();
+        $totalViews = JobVacancies::whereNull('deleted_at')->sum('view_count');
+        $activeUsers = User::where('last_login', '>=', now()->subDays(30))->count();
 
-        $mostAppliedJobs = JobVacancies::with('company')->whereNull('deleted_at')->orderByDesc('apply_count')->limit(5)->get();
+        /** @var array<string,int> */
+        $applicationStatusBreakdown = JobApplications::whereNull('deleted_at')
+            ->get()
+            ->groupBy('status')
+            ->map(fn ($g) => $g->count())
+            ->toArray();
 
-        $ConversionData = JobVacancies::whereNull('deleted_at')
+        $mostAppliedJobs = JobVacancies::with('company')
+            ->whereNull('deleted_at')
+            ->orderByDesc('apply_count')
+            ->limit(5)
+            ->get();
+
+        $conversionData = JobVacancies::whereNull('deleted_at')
             ->where('view_count', '>', 0)
             ->orderByRaw('(apply_count / view_count) DESC')
             ->limit(5)
@@ -77,14 +117,23 @@ class DashboardController extends Controller
 
                 return $job;
             });
-        $analytics = [
-            'activeUsers_last_30_days' => $activeUsers_last_30_days,
+
+        $recentApplications = JobApplications::with(['job', 'user'])
+            ->whereNull('deleted_at')
+            ->latest()
+            ->limit(6)
+            ->get();
+
+        return [
+            'activeUsers_last_30_days' => $activeUsers,
             'totalJobs' => $totalJobs,
             'totalApplications' => $totalApplications,
+            'totalViews' => $totalViews,
+            'totalCompanies' => $totalCompanies,
+            'applicationStatusBreakdown' => $applicationStatusBreakdown,
             'mostAppliedJobs' => $mostAppliedJobs,
-            'conversionData' => $ConversionData,
+            'conversionData' => $conversionData,
+            'recentApplications' => $recentApplications,
         ];
-
-        return $analytics;
     }
 }

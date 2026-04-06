@@ -14,18 +14,28 @@ class JobVacanciesController extends Controller
 {
     public function index(Request $request)
     {
-        // Active
-        $query = JobVacancies::latest();
+        $query = JobVacancies::with('company')->latest();
 
         if (Auth::user()->role === 'company') {
             $query->where('company_id', Auth::user()->company->id);
         }
 
-        // Archived
-        if ($request->input('archived') == 'true') {
+        if ($request->input('archived') === 'true') {
             $query->onlyTrashed();
         }
-        $jobVacancies = $query->paginate(5)->onEachSide(1)->withQueryString();
+
+        if ($search = $request->input('search')) {
+            $query->where(function ($q) use ($search): void {
+                $q->where('title', 'like', "%{$search}%")
+                    ->orWhere('location', 'like', "%{$search}%");
+            });
+        }
+
+        if ($type = $request->input('type')) {
+            $query->where('type', $type);
+        }
+
+        $jobVacancies = $query->paginate(10)->onEachSide(1)->withQueryString();
         $isAdmin = Auth::user()->role === 'admin';
 
         return view('job-vacancies.index', compact('jobVacancies', 'isAdmin'));

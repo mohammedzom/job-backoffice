@@ -13,14 +13,21 @@ class CompanyController extends Controller
 {
     public function index(Request $request)
     {
-        // Active
         $query = Companies::latest();
 
-        // Archived
-        if ($request->input('archived') == 'true') {
+        if ($request->input('archived') === 'true') {
             $query->onlyTrashed();
         }
-        $companies = $query->paginate(5)->onEachSide(1)->withQueryString();
+
+        if ($search = $request->input('search')) {
+            $query->where(function ($q) use ($search): void {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('industry', 'like', "%{$search}%")
+                    ->orWhere('address', 'like', "%{$search}%");
+            });
+        }
+
+        $companies = $query->paginate(10)->onEachSide(1)->withQueryString();
 
         return view('company.index', compact('companies'));
     }

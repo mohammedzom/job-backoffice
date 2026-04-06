@@ -5,26 +5,40 @@ namespace App\Http\Controllers;
 use App\Http\Requests\JobApplication\JobApplicationUpdateRequest;
 use App\Models\JobApplications;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class JobApplicationController extends Controller
 {
     public function index(Request $request)
     {
-        // Active
+        $user = Auth::user();
+        $isCompany = $user->role === 'company';
+
         $query = JobApplications::latest();
 
-        // Archived
-        if ($request->input('archived') == 'true') {
-            $query->onlyTrashed();
+        if ($isCompany) {
+            $query->whereHas('job', fn ($q) => $q->where('company_id', $user->company->id));
+        } else {
+            if ($request->input('archived') == 'true') {
+                $query->onlyTrashed();
+            }
         }
+
         $jobApplications = $query->with(['user', 'job'])->paginate(5)->onEachSide(1)->withQueryString();
 
-        return view('job-application.index', compact('jobApplications'));
+        return view('job-application.index', compact('jobApplications', 'isCompany'));
     }
 
     public function edit(string $id)
     {
+        $user = Auth::user();
+        $isCompany = $user->role === 'company';
+
         $jobApplication = JobApplications::with(['user', 'job'])->findOrFail($id);
+
+        if ($isCompany && $jobApplication->job->company_id !== $user->company->id) {
+            abort(403);
+        }
 
         return view('job-application.edit', compact('jobApplication'));
     }
@@ -42,9 +56,16 @@ class JobApplicationController extends Controller
 
     public function show(string $id)
     {
+        $user = Auth::user();
+        $isCompany = $user->role === 'company';
+
         $jobApplication = JobApplications::with(['user', 'job', 'resume'])->findOrFail($id);
 
-        return view('job-application.show', compact('jobApplication'));
+        if ($isCompany && $jobApplication->job->company_id !== $user->company->id) {
+            abort(403);
+        }
+
+        return view('job-application.show', compact('jobApplication', 'isCompany'));
     }
 
     public function destroy(string $id)

@@ -15,7 +15,7 @@ class JobVacanciesUpdateRequest extends FormRequest
             'type' => 'sometimes|string|in:full_time,part_time,contract,remote,hybrid,other',
             'salary' => 'sometimes|numeric',
             'status' => 'sometimes|string|in:open,closed,pending',
-            'technologies' => 'sometimes|string',
+            'technologies' => 'sometimes',
             'application_deadline' => 'sometimes|date|after_or_equal:today',
             'company_id' => 'sometimes|exists:companies,id',
             'categories' => 'sometimes|array|min:1',
@@ -33,7 +33,7 @@ class JobVacanciesUpdateRequest extends FormRequest
             'type.string' => 'The job type must be a string.',
             'salary.numeric' => 'The job salary must be a number.',
             'status.string' => 'The job status must be a string.',
-            'technologies.string' => 'The job technologies must be a string.',
+
             'application_deadline.date' => 'The job application deadline must be a date.',
             'company_id.exists' => 'The selected company is invalid.',
             'categories.array' => 'The job categories must be an array.',

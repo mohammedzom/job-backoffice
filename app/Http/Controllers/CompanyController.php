@@ -7,6 +7,7 @@ use App\Http\Requests\Companies\CompaniesUpdateRequest;
 use App\Models\Companies;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class CompanyController extends Controller
 {
@@ -59,26 +60,47 @@ class CompanyController extends Controller
             ->with('success', __('Company added successfully'));
     }
 
-    public function edit(string $id)
+    public function edit(?string $id = null)
     {
-        $company = Companies::findOrFail($id);
+        if (Auth::user()->role === 'company') {
+            $company = Auth::user()->company()->first();
+        } else {
+            $company = Companies::findOrFail($id);
+        }
         $industries = ['Technology', 'Healthcare', 'Finance', 'Education', 'Retail', 'Manufacturing', 'Other'];
 
         return view('company.edit', compact('company', 'industries'));
     }
 
-    public function update(CompaniesUpdateRequest $request, string $id)
+    public function update(CompaniesUpdateRequest $request, ?string $id = null)
     {
-        $company = Companies::findOrFail($id);
+        if (Auth::user()->role === 'company') {
+            $company = Auth::user()->company()->first();
+        } else {
+            $company = Companies::findOrFail($id);
+        }
         $company->update($request->validated());
 
-        return redirect()->route('company.index')
-            ->with('success', 'Company updated successfully');
+        if (Auth::user()->role === 'company') {
+            return redirect()->route('my-company.show')
+                ->with('success', 'Company updated successfully');
+        } else {
+            return redirect()->route('company.index')
+                ->with('success', 'Company updated successfully');
+        }
     }
 
-    public function show(string $id)
+    public function show(?string $id = null)
     {
-        $company = Companies::with(['jobs.applications.user', 'jobs.applications.job'])->findOrFail($id);
+        if (Auth::user()->role === 'company') {
+            $company = Auth::user()->company()->with(['jobs.applications.user', 'jobs.applications.job'])->first();
+        } else {
+            if ($id === null) {
+                return redirect()->route('company.index')
+                    ->with('error', __('Company not found'));
+            }
+            $company = Companies::with(['jobs.applications.user', 'jobs.applications.job'])->findOrFail($id);
+        }
 
         return view('company.show', compact('company'));
     }

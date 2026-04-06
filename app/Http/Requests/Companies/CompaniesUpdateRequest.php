@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Companies;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
 class CompaniesUpdateRequest extends FormRequest
@@ -14,7 +15,7 @@ class CompaniesUpdateRequest extends FormRequest
                 'sometimes',
                 'string',
                 'max:255',
-                Rule::unique('companies', 'name')->ignore($this->route('company')),
+                Auth::user()->role === 'company' ? Rule::unique('companies', 'name')->ignore(Auth::user()->company->id) : Rule::unique('companies', 'name')->ignore($this->route('company')),
             ],
             'address' => 'sometimes|string|max:255',
             'industry' => 'sometimes|string|max:255|in:Technology,Healthcare,Finance,Education,Retail,Manufacturing,Other',

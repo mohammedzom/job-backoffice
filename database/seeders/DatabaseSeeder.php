@@ -58,6 +58,11 @@ class DatabaseSeeder extends Seeder
 
         // Job Vacancies
         foreach ($jobData['jobVacancies'] as $jobVacancyData) {
+            $techs = is_array($jobVacancyData['technologies'])
+                ? $jobVacancyData['technologies']
+                : explode(',', $jobVacancyData['technologies']);
+            $technologies = array_values(array_filter(array_map('trim', $techs)));
+
             $jobVacancy = JobVacancies::firstOrCreate([
                 'title' => $jobVacancyData['title'],
             ], [
@@ -65,9 +70,11 @@ class DatabaseSeeder extends Seeder
                 'location' => $jobVacancyData['location'],
                 'type' => $jobVacancyData['type'],
                 'salary' => $jobVacancyData['salary'],
+                'status' => $jobVacancyData['status'] ?? 'open',
                 'company_id' => Companies::where('name', $jobVacancyData['company'])->first()->id,
-                'technologies' => json_encode($jobVacancyData['technologies']),
+                'technologies' => $technologies,
             ]);
+
             $categoryId = JobCategory::where('name', $jobVacancyData['category'])->first()->id;
             $jobVacancy->categories()->syncWithoutDetaching([$categoryId]);
         }

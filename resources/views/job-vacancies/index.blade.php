@@ -57,9 +57,11 @@
                             <th
                                 class="px-6 py-4 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                 {{ __('Job Title') }}</th>
-                            <th
-                                class="px-6 py-4 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                                {{ __('Company') }}</th>
+                            @if ($isAdmin)
+                                <th
+                                    class="px-6 py-4 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                    {{ __('Company') }}</th>
+                            @endif
                             <th
                                 class="px-6 py-4 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                 {{ __('Location') }}</th>
@@ -88,10 +90,12 @@
                                             class="text-sm font-semibold text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300 transition-colors">{{ $jobVacancy->title }}</a>
                                     @endif
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300">
-                                    <a href="{{ route('company.show', $jobVacancy->company->id) }}"
-                                        class="text-sm font-semibold text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300 transition-colors underline">{{ $jobVacancy->company->name ?: __('Not specified') }}</a>
-                                </td>
+                                @if ($isAdmin)
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300">
+                                        <a href="{{ route('company.show', $jobVacancy->company->id) }}"
+                                            class="text-sm font-semibold text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300 transition-colors underline">{{ $jobVacancy->company->name ?: __('Not specified') }}</a>
+                                    </td>
+                                @endif
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300">
                                     <span
                                         class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400 border border-blue-200 dark:border-blue-800">

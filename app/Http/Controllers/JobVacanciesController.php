@@ -8,6 +8,7 @@ use App\Models\Companies;
 use App\Models\JobCategory;
 use App\Models\JobVacancies;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class JobVacanciesController extends Controller
 {
@@ -16,21 +17,34 @@ class JobVacanciesController extends Controller
         // Active
         $query = JobVacancies::latest();
 
+        if (Auth::user()->role === 'company') {
+            $query->where('company_id', Auth::user()->company->id);
+        }
+
         // Archived
         if ($request->input('archived') == 'true') {
             $query->onlyTrashed();
         }
         $jobVacancies = $query->paginate(5)->onEachSide(1)->withQueryString();
+        $isAdmin = Auth::user()->role === 'admin';
 
-        return view('job-vacancies.index', compact('jobVacancies'));
+        return view('job-vacancies.index', compact('jobVacancies', 'isAdmin'));
     }
 
     public function create()
     {
-        $companies = Companies::orderBy('name')->get();
+        $isCompany = Auth::user()->role === 'company';
         $categories = JobCategory::orderBy('name')->get();
 
-        return view('job-vacancies.create', compact('companies', 'categories'));
+        if ($isCompany) {
+            $company = Auth::user()->company;
+
+            return view('job-vacancies.create', compact('isCompany', 'categories', 'company'));
+        }
+
+        $companies = Companies::orderBy('name')->get();
+
+        return view('job-vacancies.create', compact('isCompany', 'categories', 'companies'));
     }
 
     public function store(JobVacanciesCreateRequest $request)
@@ -40,8 +54,9 @@ class JobVacanciesController extends Controller
         $categories = $validated['categories'] ?? [];
         unset($validated['categories']);
 
-        if (isset($validated['technologies']) && is_string($validated['technologies'])) {
-            $validated['technologies'] = array_map('trim', explode(',', $validated['technologies']));
+        if (isset($validated['technologies'])) {
+            $techs = is_array($validated['technologies']) ? $validated['technologies'] : explode(',', $validated['technologies']);
+            $validated['technologies'] = array_values(array_filter(array_map('trim', $techs)));
         }
 
         $jobVacancy = JobVacancies::create($validated);
@@ -56,11 +71,20 @@ class JobVacanciesController extends Controller
 
     public function edit(string $id)
     {
-        $companies = Companies::orderBy('name')->get();
+        $isCompany = Auth::user()->role === 'company';
         $categories = JobCategory::orderBy('name')->get();
+
+        if ($isCompany) {
+            $company = Auth::user()->company;
+            $jobVacancy = JobVacancies::where('company_id', $company->id)->findOrFail($id);
+
+            return view('job-vacancies.edit', compact('isCompany', 'categories', 'company', 'jobVacancy'));
+        }
+
+        $companies = Companies::orderBy('name')->get();
         $jobVacancy = JobVacancies::findOrFail($id);
 
-        return view('job-vacancies.edit', compact('jobVacancy', 'companies', 'categories'));
+        return view('job-vacancies.edit', compact('isCompany', 'categories', 'companies', 'jobVacancy'));
     }
 
     public function update(JobVacanciesUpdateRequest $request, string $id)
@@ -71,8 +95,9 @@ class JobVacanciesController extends Controller
         $categories = $validated['categories'] ?? [];
         unset($validated['categories']);
 
-        if (isset($validated['technologies']) && is_string($validated['technologies'])) {
-            $validated['technologies'] = array_map('trim', explode(',', $validated['technologies']));
+        if (isset($validated['technologies'])) {
+            $techs = is_array($validated['technologies']) ? $validated['technologies'] : explode(',', $validated['technologies']);
+            $validated['technologies'] = array_values(array_filter(array_map('trim', $techs)));
         }
 
         $jobVacancy->update($validated);

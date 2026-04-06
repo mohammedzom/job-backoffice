@@ -355,23 +355,24 @@
                                 </svg>
                                 {{ __('Update Status') }}
                             </a>
-
-                            <form action="{{ route('job-application.destroy', $jobApplication->id) }}" method="POST"
-                                class="m-0">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit"
-                                    onclick="return confirm('{{ __('Are you sure you want to archive this job application?') }}')"
-                                    class="inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-lg font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-500 focus:bg-red-700 active:bg-red-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150 shadow-sm">
-                                    <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
-                                        </path>
-                                    </svg>
-                                    {{ __('Archive') }}
-                                </button>
-                            </form>
+                            @if (!$isCompany)
+                                <form action="{{ route('job-application.destroy', $jobApplication->id) }}"
+                                    method="POST" class="m-0">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit"
+                                        onclick="return confirm('{{ __('Are you sure you want to archive this job application?') }}')"
+                                        class="inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-lg font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-500 focus:bg-red-700 active:bg-red-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150 shadow-sm">
+                                        <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                                            </path>
+                                        </svg>
+                                        {{ __('Archive') }}
+                                    </button>
+                                </form>
+                            @endif
                         </div>
                     </div>
 

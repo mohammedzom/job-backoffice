@@ -337,7 +337,7 @@
                                                 @if (!empty($application->ai_generated_feedback))
                                                     <div class="text-xs text-gray-600 dark:text-gray-400 max-w-[150px] truncate"
                                                         title="{{ $application->ai_generated_feedback }}">
-                                                        {{ \Illuminate\Support\Str::limit($application->ai_generated_feedback, 30) }}
+                                                        {{ Str::limit($application->ai_generated_feedback, 30) }}
                                                     </div>
                                                 @else
                                                     <span
@@ -349,7 +349,7 @@
                                                 {{ $application->created_at ? $application->created_at->format('M d, Y') : '-' }}
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                                <a href="#"
+                                                <a href="{{ route('job-application.show', $application->id) }}"
                                                     class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 bg-indigo-50 dark:bg-indigo-900/30 px-3 py-1.5 rounded-md transition-colors">{{ __('View') }}</a>
                                             </td>
                                         </tr>

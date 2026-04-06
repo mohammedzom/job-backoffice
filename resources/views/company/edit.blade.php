@@ -15,7 +15,9 @@
                     </p>
                 </div>
                 <div class="p-8">
-                    <form action="{{ route('company.update', $company->id) }}" method="POST">
+                    <form
+                        action="{{ Auth::user()->role === 'admin' ? route('company.update', $company->id) : route('my-company.update') }}"
+                        method="POST">
                         @csrf
                         @method('PUT')
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -82,7 +84,7 @@
 
                         <div
                             class="mt-10 flex items-center justify-end space-x-4 border-t border-gray-100 dark:border-gray-700 pt-6">
-                            <a href="{{ route('company.index') }}"
+                            <a href="{{ Auth::user()->role === 'admin' ? route('company.index') : route('my-company.show') }}"
                                 class="inline-flex items-center px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-xl font-medium text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-900 transition-all duration-300">
                                 {{ __('Cancel') }}
                             </a>

@@ -14,6 +14,21 @@
 
 ---
 
+---
+
+## 🔐 Live Demo & Credentials
+
+You can test the live dashboard at: **[dashboard.mohammedzom.online](https://dashboard.mohammedzom.online/)**
+
+To log in, please use the following demo credentials:
+- **Email:** `admin@job.com`
+- **Password:** `12345678@`
+
+> **💡 Note for Testers:** > - For testing convenience, **all user and company accounts** in the demo environment share the exact same password: `12345678@`.
+> - All data currently displayed (companies, jobs, users, applications) is **fake/dummy data** generated automatically using Laravel Seeders for demonstration purposes.
+
+---
+
 ## 📌 Overview
 
 **Shaghalni Backoffice** is the administration dashboard for the [Shaghalni Job Platform](https://github.com/mohammedzom/job-app) — a bilingual (Arabic/English) job marketplace connecting employers and job seekers.
@@ -179,7 +194,7 @@ lang/
 
 ## 👨‍💻 Author
 
-**Mohammed Zom**  
+**Mohammed Zomlot**  
 Backend Developer & DevOps Engineer | Laravel 
 📎 [GitHub @mohammedzom](https://github.com/mohammedzom)
 

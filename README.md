@@ -14,6 +14,15 @@
 
 ---
 
+## 📌 Overview
+
+**Shaghalni Backoffice** is the administration dashboard for the [Shaghalni Job Platform](https://github.com/mohammedzom/job-app) — a bilingual (Arabic/English) job marketplace connecting employers and job seekers.
+
+This panel gives platform administrators and company managers full control over every entity inside the system: companies, job vacancies, user accounts, applications, and job categories — all from a single, beautifully designed interface.
+
+> **Backend:** Fully developed by **[@mohammedzom](https://github.com/mohammedzom)**  
+> **Frontend / UI:** Designed with the assistance of **AI (Claude by Anthropic)**
+
 ---
 
 ## 🔐 Live Demo & Credentials
@@ -26,17 +35,6 @@ To log in, please use the following demo credentials:
 
 > **💡 Note for Testers:** > - For testing convenience, **all user and company accounts** in the demo environment share the exact same password: `12345678@`.
 > - All data currently displayed (companies, jobs, users, applications) is **fake/dummy data** generated automatically using Laravel Seeders for demonstration purposes.
-
----
-
-## 📌 Overview
-
-**Shaghalni Backoffice** is the administration dashboard for the [Shaghalni Job Platform](https://github.com/mohammedzom/job-app) — a bilingual (Arabic/English) job marketplace connecting employers and job seekers.
-
-This panel gives platform administrators and company managers full control over every entity inside the system: companies, job vacancies, user accounts, applications, and job categories — all from a single, beautifully designed interface.
-
-> **Backend:** Fully developed by **[@mohammedzom](https://github.com/mohammedzom)**  
-> **Frontend / UI:** Designed with the assistance of **AI (Claude by Anthropic)**
 
 ---
 

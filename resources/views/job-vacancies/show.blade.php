@@ -299,10 +299,7 @@
                                             <td class="px-6 py-4 whitespace-nowrap text-center">
                                                 @if (isset($application->ai_generated_score) && $application->ai_generated_score !== null)
                                                     @php
-                                                        $score = min(
-                                                            max($application->ai_generated_score * 10, 0),
-                                                            100,
-                                                        );
+                                                        $score = min(max($application->ai_generated_score, 0), 100);
                                                         $barColor = match (true) {
                                                             $score >= 80
                                                                 => 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.4)]',

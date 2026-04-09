@@ -147,7 +147,7 @@
                                         <p class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-4">
                                             {{ __('Match Score') }}</p>
                                         @php
-                                            $score = min(max($jobApplication->ai_generated_score * 10, 0), 100);
+                                            $score = min(max($jobApplication->ai_generated_score, 0), 100);
                                             $textColor = match (true) {
                                                 $score >= 80 => 'text-emerald-500',
                                                 $score >= 60 => 'text-green-500',

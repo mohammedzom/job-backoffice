@@ -410,7 +410,7 @@
                                                         @if (isset($application->ai_generated_score) && $application->ai_generated_score !== null)
                                                             @php
                                                                 $score = min(
-                                                                    max($application->ai_generated_score * 10, 0),
+                                                                    max($application->ai_generated_score, 0),
                                                                     100,
                                                                 );
                                                                 $barColor = match (true) {

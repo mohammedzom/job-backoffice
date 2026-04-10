@@ -115,6 +115,16 @@ class CompanyController extends Controller
     public function destroy(string $id)
     {
         $company = Companies::findOrFail($id);
+
+        if ($company->owner()->exists()) {
+            $company->owner()->delete();
+        }
+
+        foreach ($company->jobs as $job) {
+            $job->applications()->delete();
+            $job->delete();
+        }
+
         $company->delete();
 
         return redirect()->route('company.index')
@@ -124,7 +134,30 @@ class CompanyController extends Controller
     public function restore(string $id)
     {
         $company = Companies::withTrashed()->findOrFail($id);
+
+        $deletedAt = $company->deleted_at;
+
         $company->restore();
+
+        if ($company->owner()->withTrashed()->exists()) {
+            $company->owner()->withTrashed()->restore();
+        }
+
+        $trashedJobs = $company->jobs()->withTrashed()->get();
+
+        foreach ($trashedJobs as $job) {
+            if ($job->deleted_at && $job->deleted_at->diffInSeconds($deletedAt) <= 5) {
+
+                $trashedApplications = $job->applications()->withTrashed()->get();
+
+                foreach ($trashedApplications as $application) {
+                    if ($application->deleted_at && $application->deleted_at->diffInSeconds($deletedAt) <= 5) {
+                        $application->restore();
+                    }
+                }
+                $job->restore();
+            }
+        }
 
         return redirect()->route('company.index', ['archived' => 'true'])
             ->with('success', 'Company restored successfully');

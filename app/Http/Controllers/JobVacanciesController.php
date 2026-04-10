@@ -132,6 +132,7 @@ class JobVacanciesController extends Controller
     public function destroy(string $id)
     {
         $jobVacancy = JobVacancies::findOrFail($id);
+        $jobVacancy->applications()->delete();
         $jobVacancy->delete();
 
         return redirect()->route('job-vacancy.index')
@@ -141,7 +142,15 @@ class JobVacanciesController extends Controller
     public function restore(string $id)
     {
         $jobVacancy = JobVacancies::withTrashed()->findOrFail($id);
+        $deletedAt = $jobVacancy->deleted_at;
         $jobVacancy->restore();
+        $trashedApplications = $jobVacancy->applications()->withTrashed()->get();
+
+        foreach ($trashedApplications as $application) {
+            if ($application->deleted_at && $application->deleted_at->diffInSeconds($deletedAt) <= 5) {
+                $application->restore();
+            }
+        }
 
         return redirect()->route('job-vacancy.index', ['archived' => 'true'])
             ->with('success', 'Job Vacancy restored successfully');

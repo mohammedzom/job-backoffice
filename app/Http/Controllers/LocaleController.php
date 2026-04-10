@@ -7,12 +7,8 @@ use Illuminate\Http\Request;
 
 class LocaleController extends Controller
 {
-    /** @var string[] */
     private const SUPPORTED_LOCALES = ['en', 'ar'];
 
-    /**
-     * Switch the application locale and redirect back.
-     */
     public function switch(Request $request, string $locale): RedirectResponse
     {
         if (! in_array($locale, self::SUPPORTED_LOCALES, strict: true)) {

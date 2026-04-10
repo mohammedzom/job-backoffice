@@ -8,9 +8,6 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index(Request $request)
     {
         $query = User::query();
@@ -24,9 +21,6 @@ class UserController extends Controller
         return view('user.index', compact('users'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(string $id)
     {
         $user = User::findOrFail($id);
@@ -34,9 +28,6 @@ class UserController extends Controller
         return view('user.edit', compact('user'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id)
     {
         $user = User::findOrFail($id);
@@ -52,14 +43,11 @@ class UserController extends Controller
         return redirect()->route('user.index')->with('success', 'User password updated successfully.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
+        $user = User::with(['applications.job'])->findOrFail($id);
 
-        $user = User::findOrFail($id);
-        foreach ($user->jobApplications as $jobApplication) {
+        foreach ($user->applications as $jobApplication) {
             $jobApplication->job()->decrement('apply_count');
             $jobApplication->delete();
         }
@@ -73,7 +61,10 @@ class UserController extends Controller
         $user = User::withTrashed()->findOrFail($id);
         $deletionTimeBuffer = $user->deleted_at->subSeconds(5);
         $user->restore();
-        $trashedApplications = $user->jobApplications()->onlyTrashed()->where('deleted_at', '>=', $deletionTimeBuffer)->get();
+        $trashedApplications = $user->applications()
+            ->onlyTrashed()
+            ->where('deleted_at', '>=', $deletionTimeBuffer)
+            ->get();
 
         foreach ($trashedApplications as $jobApplication) {
             $jobApplication->job()->increment('apply_count');

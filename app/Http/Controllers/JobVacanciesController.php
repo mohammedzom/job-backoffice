@@ -132,6 +132,8 @@ class JobVacanciesController extends Controller
     public function destroy(string $id)
     {
         $jobVacancy = JobVacancies::findOrFail($id);
+        $applyCount = $jobVacancy->applications()->whereNull('deleted_at')->count();
+        $jobVacancy->decrement('apply_count', $applyCount);
         $jobVacancy->applications()->delete();
         $jobVacancy->delete();
 
@@ -149,6 +151,7 @@ class JobVacanciesController extends Controller
         foreach ($trashedApplications as $application) {
             if ($application->deleted_at && $application->deleted_at->diffInSeconds($deletedAt) <= 5) {
                 $application->restore();
+                $jobVacancy->increment('apply_count');
             }
         }
 

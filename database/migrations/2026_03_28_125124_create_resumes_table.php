@@ -17,10 +17,13 @@ return new class extends Migration
             $table->string('file_name');
             $table->string('file_url');
             $table->string('contact_details');
-            $table->longText('summary');
-            $table->json('experience');
-            $table->json('education');
-            $table->json('skills');
+            $table->longText('summary')->nullable();
+            $table->json('experience')->nullable();
+            $table->json('education')->nullable();
+            $table->json('skills')->nullable();
+            $table->json('projects')->nullable();
+            $table->json('other')->nullable();
+            $table->boolean('is_analyzed')->default(false);
             $table->timestamps();
             $table->softDeletes();
         });

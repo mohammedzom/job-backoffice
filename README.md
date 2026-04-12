@@ -104,12 +104,17 @@ To log in, please use the following demo credentials:
 
 ---
 
-## 🔗 Related Repository
+## 🔗 Related Repositories & Architecture
 
-| Project | Link |
-|---|---|
-| 🌐 **Job Platform (User-Facing App)** | [github.com/mohammedzom/job-app](https://github.com/mohammedzom/job-app) |
-| 🏢 **Backoffice Dashboard (this repo)** | [github.com/mohammedzom/job-backoffice](https://github.com/mohammedzom/job-backoffice) |
+This dashboard is part of a broader ecosystem. To maintain consistency, **Eloquent Models are shared** between the main job platform and this backoffice dashboard via a local package.
+
+All three projects should ideally be placed in the same parent directory to correctly resolve the local composer path for the shared library.
+
+| Project | Link | Role |
+|---|---|---|
+| 🌐 **Job Platform (User-Facing)** | [mohammedzom/job-app](https://github.com/mohammedzom/job-app) | Main application for job seekers |
+| 🏢 **Backoffice Dashboard** | [mohammedzom/job-backoffice](https://github.com/mohammedzom/job-backoffice) | This repository (Admin & Company Dashboard) |
+| 📦 **Shared Models Library** | [mohammedzom/job-shared](https://github.com/mohammedzom/job-shared) | Local library containing shared Eloquent models |
 
 ---
 
@@ -124,27 +129,47 @@ To log in, please use the following demo credentials:
 ### Installation
 
 ```bash
-# 1. Clone the repository
+# 1. Create a directory for the project
+mkdir job-project
+
+# 2. Enter the directory
+cd job-project
+
+# 3. Clone the repository library
+git clone https://github.com/mohammedzom/job-shared.git
+
+# 4. Clone the main application
+git clone https://github.com/mohammedzom/job-app.git
+
+# 5. Clone the repository
 git clone https://github.com/mohammedzom/job-backoffice.git
+
+# 6. Make sure you have the following directory structure:
+job-project/
+├── job-app/
+├── job-shared/
+└── job-backoffice/
+
+# 7. Enter the directory
 cd job-backoffice
 
-# 2. Install PHP dependencies
+# 8. Install PHP dependencies
 composer install
 
-# 3. Install Node dependencies
+# 9. Install Node dependencies
 npm install
 
-# 4. Copy environment file and configure
+# 10. Copy environment file and configure
 cp .env.example .env
 php artisan key:generate
 
-# 5. Set up the database in .env, then run migrations and seeders
+# 11. Set up the database in .env, then run migrations and seeders
 php artisan migrate --seed
 
-# 6. Build frontend assets
+# 12. Build frontend assets
 npm run build
 
-# 7. Serve the application
+# 13. Serve the application
 php artisan serve
 ```
 
@@ -165,8 +190,11 @@ php artisan serve
 ```
 app/
 ├── Http/Controllers/       # Resource controllers (Company, JobVacancy, User…)
-├── Models/                 # Eloquent models with relationships & casts
-└── Http/Requests/          # Form request validation classes
+├── Http/Requests/          # Form request validation classes
+└── ...
+
+job-shared/ (External package)
+└── src/Models/             # Eloquent models with relationships & casts
 
 resources/
 ├── views/

@@ -248,7 +248,10 @@
 
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                                     <!-- Skills Section -->
-                                    @if ($jobApplication->resume->skills)
+                                    @php
+                                        $skills = is_array($jobApplication->resume->skills) ? $jobApplication->resume->skills : [];
+                                    @endphp
+                                    @if (count($skills) > 0)
                                         <div>
                                             <h5
                                                 class="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-3 flex items-center">
@@ -261,15 +264,25 @@
                                             </h5>
                                             <div
                                                 class="bg-gray-50 dark:bg-gray-900/40 rounded-xl p-5 border border-gray-100 dark:border-gray-800 min-h-[120px]">
-                                                <div
-                                                    class="text-sm font-medium text-gray-700 dark:text-gray-300 whitespace-pre-wrap leading-relaxed">
-                                                    {{ $jobApplication->resume->skills }}</div>
+                                                <div class="flex flex-wrap gap-2">
+                                                    @foreach ($skills as $skill)
+                                                        @if (is_string($skill) && trim($skill))
+                                                            <span
+                                                                class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-indigo-100 text-indigo-800 dark:bg-indigo-900/40 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
+                                                                {{ trim($skill) }}
+                                                            </span>
+                                                        @endif
+                                                    @endforeach
+                                                </div>
                                             </div>
                                         </div>
                                     @endif
 
                                     <!-- Education Section -->
-                                    @if ($jobApplication->resume->education)
+                                    @php
+                                        $eduItems = is_array($jobApplication->resume->education) ? $jobApplication->resume->education : [];
+                                    @endphp
+                                    @if (count($eduItems) > 0)
                                         <div>
                                             <h5
                                                 class="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-3 flex items-center">
@@ -287,17 +300,41 @@
                                                 {{ __('Education') }}
                                             </h5>
                                             <div
-                                                class="bg-gray-50 dark:bg-gray-900/40 rounded-xl p-5 border border-gray-100 dark:border-gray-800 min-h-[120px]">
-                                                <div
-                                                    class="text-sm font-medium text-gray-700 dark:text-gray-300 whitespace-pre-wrap leading-relaxed">
-                                                    {{ $jobApplication->resume->education }}</div>
+                                                class="bg-gray-50 dark:bg-gray-900/40 rounded-xl p-5 border border-gray-100 dark:border-gray-800 min-h-[120px] space-y-3">
+                                                @foreach ($eduItems as $edu)
+                                                    <div class="border-b border-gray-200 dark:border-gray-700 last:border-0 pb-3 last:pb-0">
+                                                        @if (isset($edu['degree']))
+                                                            <div
+                                                                class="text-sm font-semibold text-gray-800 dark:text-gray-200">
+                                                                {{ $edu['degree'] }}</div>
+                                                        @endif
+                                                        @if (isset($edu['field_of_study']))
+                                                            <div
+                                                                class="text-xs text-gray-500 dark:text-gray-400 font-medium mt-0.5">
+                                                                {{ $edu['field_of_study'] }}</div>
+                                                        @endif
+                                                        @if (isset($edu['university']))
+                                                            <div
+                                                                class="text-xs font-semibold text-indigo-600 dark:text-indigo-400 mt-0.5">
+                                                                {{ $edu['university'] }}</div>
+                                                        @endif
+                                                        @if (isset($edu['graduation_year']))
+                                                            <div
+                                                                class="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
+                                                                {{ $edu['graduation_year'] }}</div>
+                                                        @endif
+                                                    </div>
+                                                @endforeach
                                             </div>
                                         </div>
                                     @endif
                                 </div>
 
                                 <!-- Experience Section -->
-                                @if ($jobApplication->resume->experience)
+                                @php
+                                    $expItems = is_array($jobApplication->resume->experience) ? $jobApplication->resume->experience : [];
+                                @endphp
+                                @if (count($expItems) > 0)
                                     <div>
                                         <h5
                                             class="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-3 flex items-center">
@@ -310,10 +347,37 @@
                                             {{ __('Work Experience') }}
                                         </h5>
                                         <div
-                                            class="bg-gray-50 dark:bg-gray-900/40 rounded-xl p-6 border border-gray-100 dark:border-gray-800">
-                                            <div
-                                                class="prose dark:prose-invert max-w-none text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap leading-relaxed">
-                                                {{ $jobApplication->resume->experience }}</div>
+                                            class="bg-gray-50 dark:bg-gray-900/40 rounded-xl p-6 border border-gray-100 dark:border-gray-800 space-y-4">
+                                            @foreach ($expItems as $exp)
+                                                <div
+                                                    class="border-b border-gray-200 dark:border-gray-700 last:border-0 pb-4 last:pb-0">
+                                                    @if (isset($exp['position']))
+                                                        <div
+                                                            class="text-sm font-bold text-gray-900 dark:text-gray-100">
+                                                            {{ $exp['position'] }}</div>
+                                                    @endif
+                                                    @if (isset($exp['company']))
+                                                        <div
+                                                            class="text-xs font-semibold text-indigo-600 dark:text-indigo-400 mt-0.5">
+                                                            {{ $exp['company'] }}</div>
+                                                    @endif
+                                                    @if (isset($exp['start_date']) || isset($exp['end_date']))
+                                                        <div class="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
+                                                            {{ $exp['start_date'] ?? '' }}
+                                                            @if (isset($exp['start_date']) && isset($exp['end_date']))
+                                                                &ndash;
+                                                            @endif
+                                                            {{ $exp['end_date'] ?? '' }}
+                                                        </div>
+                                                    @endif
+                                                    @if (isset($exp['responsibilities']) && $exp['responsibilities'])
+                                                        <p
+                                                            class="text-xs text-gray-600 dark:text-gray-400 mt-1.5 leading-relaxed">
+                                                            {{ $exp['responsibilities'] }}
+                                                        </p>
+                                                    @endif
+                                                </div>
+                                            @endforeach
                                         </div>
                                     </div>
                                 @endif

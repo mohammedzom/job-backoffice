@@ -215,7 +215,8 @@
                                     </svg>
                                     {{ __('Applicant Resume Detailed') }}
                                 </h4>
-                                <a href="{{ $jobApplication->resume->file_url }}" target="_blank"
+                                <a href="{{ env('APP_URL') . '/storage/' . $jobApplication->resume->file_url }}"
+                                    target="_blank"
                                     class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-lg font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 focus:bg-indigo-700 active:bg-indigo-900 transition ease-in-out duration-150 shadow-sm">
                                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor"
                                         viewBox="0 0 24 24">
@@ -249,7 +250,9 @@
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                                     <!-- Skills Section -->
                                     @php
-                                        $skills = is_array($jobApplication->resume->skills) ? $jobApplication->resume->skills : [];
+                                        $skills = is_array($jobApplication->resume->skills)
+                                            ? $jobApplication->resume->skills
+                                            : [];
                                     @endphp
                                     @if (count($skills) > 0)
                                         <div>
@@ -280,7 +283,9 @@
 
                                     <!-- Education Section -->
                                     @php
-                                        $eduItems = is_array($jobApplication->resume->education) ? $jobApplication->resume->education : [];
+                                        $eduItems = is_array($jobApplication->resume->education)
+                                            ? $jobApplication->resume->education
+                                            : [];
                                     @endphp
                                     @if (count($eduItems) > 0)
                                         <div>
@@ -302,7 +307,8 @@
                                             <div
                                                 class="bg-gray-50 dark:bg-gray-900/40 rounded-xl p-5 border border-gray-100 dark:border-gray-800 min-h-[120px] space-y-3">
                                                 @foreach ($eduItems as $edu)
-                                                    <div class="border-b border-gray-200 dark:border-gray-700 last:border-0 pb-3 last:pb-0">
+                                                    <div
+                                                        class="border-b border-gray-200 dark:border-gray-700 last:border-0 pb-3 last:pb-0">
                                                         @if (isset($edu['degree']))
                                                             <div
                                                                 class="text-sm font-semibold text-gray-800 dark:text-gray-200">
@@ -332,7 +338,9 @@
 
                                 <!-- Experience Section -->
                                 @php
-                                    $expItems = is_array($jobApplication->resume->experience) ? $jobApplication->resume->experience : [];
+                                    $expItems = is_array($jobApplication->resume->experience)
+                                        ? $jobApplication->resume->experience
+                                        : [];
                                 @endphp
                                 @if (count($expItems) > 0)
                                     <div>

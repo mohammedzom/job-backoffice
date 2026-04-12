@@ -18,9 +18,9 @@ return new class extends Migration
             $table->string('file_url');
             $table->string('contact_details');
             $table->longText('summary');
-            $table->longText('experience');
-            $table->longText('education');
-            $table->longText('skills');
+            $table->json('experience');
+            $table->json('education');
+            $table->json('skills');
             $table->timestamps();
             $table->softDeletes();
         });

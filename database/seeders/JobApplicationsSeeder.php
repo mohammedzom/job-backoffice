@@ -45,15 +45,37 @@ class JobApplicationsSeeder extends Seeder
             $jobVacancy->increment('apply_count');
 
             $resume_data = $jobApplication['resume'];
+
+            $skillsArray = array_map('trim', explode(',', $resume_data['skills']));
+
+            $experienceArray = [
+                [
+                    'company' => 'Previous Company',
+                    'position' => 'Previous Role',
+                    'start_date' => 'N/A',
+                    'end_date' => 'N/A',
+                    'responsibilities' => $resume_data['experience'],
+                ],
+            ];
+
+            $educationArray = [
+                [
+                    'degree' => 'Degree',
+                    'university' => 'University',
+                    'graduation_year' => 'N/A',
+                    'field_of_study' => $resume_data['education'],
+                ],
+            ];
+
             $resume = Resumes::firstOrCreate([
                 'file_name' => $resume_data['filename'],
             ], [
                 'file_url' => $resume_data['fileUri'],
                 'contact_details' => $resume_data['contactDetails'],
                 'summary' => $resume_data['summary'],
-                'skills' => $resume_data['skills'],
-                'experience' => $resume_data['experience'],
-                'education' => $resume_data['education'],
+                'skills' => $skillsArray,
+                'experience' => $experienceArray,
+                'education' => $educationArray,
                 'user_id' => $applicantUser->id,
             ]);
 

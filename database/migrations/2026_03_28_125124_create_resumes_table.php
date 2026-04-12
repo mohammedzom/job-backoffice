@@ -23,7 +23,7 @@ return new class extends Migration
             $table->json('skills')->nullable();
             $table->json('projects')->nullable();
             $table->json('other')->nullable();
-            $table->boolean('is_analyzed')->default(false);
+            $table->enum('status', ['pending', 'analyzed', 'failed'])->default('pending');
             $table->timestamps();
             $table->softDeletes();
         });
